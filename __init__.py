@@ -29,9 +29,13 @@ import bpy
 from bpy.props import (
     StringProperty,
     EnumProperty,
+    BoolProperty,
 )
 from .blendir_ops import (
     BLENDIR_OT_start,
+    BLENDIR_OT_new_structure,
+    BLENDIR_OT_edit_structure,
+    BLENDIR_OT_delete_structure,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
 )
@@ -40,20 +44,17 @@ from .blendir_ui import (
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
 )
-from .structures import STRUCTURES
+from .blendir_main import init_structs, update_structs
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
-    # add all structures to enum property
-    structure_items = []
-    for idx, structure in enumerate(STRUCTURES.keys()):
-        structure_items.append((structure, structure, "", "TRIA_RIGHT", idx))
-    structure: EnumProperty(name="", description="Structure", items=structure_items)
-
     # non UI properties
     old_path: StringProperty()
+    struct_items = init_structs()[0]
+    struct_icon: StringProperty(default=init_structs()[1])
 
     # input properties
+    structure: EnumProperty(name="", description="Structure", items=update_structs)
     x_input: StringProperty(
         name="",
         description="If a line has '*X', it will be replaced with this field",
@@ -85,9 +86,22 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         ],
     )
 
+    # misc properties
+    show_del_warning: BoolProperty(
+        name="", description="Show an extra warning before deleting files", default=True
+    )
+    show_create_warning: BoolProperty(
+        name="",
+        description="Show a warning before creating folders after the first time",
+        default=True,
+    )
+
 
 classes = (
     BLENDIR_OT_start,
+    BLENDIR_OT_new_structure,
+    BLENDIR_OT_edit_structure,
+    BLENDIR_OT_delete_structure,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
     BLENDIR_PT_main,

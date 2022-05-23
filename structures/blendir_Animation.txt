@@ -1,0 +1,8 @@
+*F*B
+	Assets
+		Models
+		Textures
+	References
+	Rendered_*D
+		Frames
+			1

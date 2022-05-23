@@ -13,11 +13,21 @@ class BLENDIR_PT_main(Panel):
     def draw(self, context):
         layout = self.layout
         props = context.scene.blendir_props
-
         box = layout.box()
-        box.scale_y = 2
-        box.operator("blendir.start", icon="NEWFOLDER")
-        box.prop(props, "structure", icon="FILE")
+
+        row = box.row()
+        row.scale_y = 2
+        row.operator("blendir.start", icon="NEWFOLDER")
+
+        row = box.row()
+        row.scale_y = 2
+        row.prop(props, "structure", icon="FILE")
+
+        row = box.row()
+        row.alignment = "CENTER"
+        row.operator("blendir.new_structure", text="", icon="FILE_NEW")
+        row.operator("blendir.edit_structure", text="", icon="CURRENT_FILE")
+        row.operator("blendir.delete_structure", text="", icon="TRASH")
 
 
 class BLENDIR_PT_input(Panel):
@@ -60,7 +70,18 @@ class BLENDIR_PT_misc(Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-
+        props = context.scene.blendir_props
         box = layout.box().column()
+
+        row = box.row()
+        row.alignment = "CENTER"
+        row.label(text="Confirm Creation")
+        row.prop(props, "show_create_warning")
+
+        row = box.row()
+        row.alignment = "CENTER"
+        row.label(text="Confirm Deletion")
+        row.prop(props, "show_del_warning")
+
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")

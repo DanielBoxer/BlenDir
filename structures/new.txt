@@ -1,0 +1,39 @@
+RootFolder
+	Folder1
+		SubFolder1A
+		SubFolder1B
+	Folder2
+	Folder3
+
+
+// The folder structure above would look like this:
+// (SaveLocation is the folder where the blender file is saved)
+// 
+// SaveLocation -> RootFolder -> Folder1 -> SubFolder1A
+// SaveLocation -> RootFolder -> Folder1 -> SubFolder1B
+// SaveLocation -> RootFolder -> Folder2
+// SaveLocation -> RootFolder -> Folder3
+// 
+//
+// Keywords (case sensitive):
+//
+// "	" - adding a tab means a level of depth
+//        -> use tabs to create subfolders
+//        -> tabs have to be used, spaces won't work
+//
+// "*B" - where the blender file is moved to
+//      -> add this somewhere in the line (ex. "FolderName*B")
+//      -> if not added, the file will stay in or be moved to the parent of the root folder
+//      -> this will be removed from the folder name before creating the folder
+//      -> backup blender files will be moved too (.blend1, .blend2 ...)
+//
+// "*F" - will be replaced with the name of the blender file
+//      -> ex. "FolderName_*F",  becomes "FolderName_FileName"
+//
+// "*X", "*Y", "*Z" - will be replaced with custom input from the UI
+//
+// "*D" - replaced with the current date
+//
+// "//" - this is a comment and will be skipped
+//      -> empty lines are also skipped
+//      -> the first line of the structure can't be empty or a comment
