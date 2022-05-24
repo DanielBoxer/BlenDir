@@ -40,18 +40,6 @@ def read_structure(structure_path):
             new_depth = line.count("\t")
             is_blend_moving = False
 
-            # remove tabs
-            line = line.strip()
-            if line.startswith("//") or line == "":
-                if line_idx == 0 and line.startswith("//"):
-                    raise BlenDirError(
-                        "The first line of the structure can't be a comment"
-                    )
-                elif line_idx == 0 and line == "":
-                    raise BlenDirError("The first line of the structure can't be empty")
-                else:
-                    continue
-
             if new_depth > previous_depth + 1:
                 extra = new_depth - previous_depth - 1
                 s = "s" if extra != 1 else ""
@@ -60,6 +48,8 @@ def read_structure(structure_path):
                     f" Line {line_idx+1} has {extra} extra tab{s}"
                 )
 
+            # remove tabs
+            line = line.strip()
             # check for keywords and replace them
             if "*F" in line:
                 line = line.replace("*F", curr_blend_path.stem)
@@ -91,9 +81,15 @@ def read_structure(structure_path):
                     date = date[:-1]
                 line = line.replace("*D", date)
 
-            if line_idx == 0:
-                # store old folder path
-                props.old_path = str(new_path / line)
+            if line.startswith("//") or line == "":
+                if line_idx == 0 and line.startswith("//"):
+                    raise BlenDirError(
+                        "The first line of the structure can't be a comment"
+                    )
+                elif line_idx == 0 and line == "":
+                    raise BlenDirError("The first line of the structure can't be empty")
+                else:
+                    continue
 
             # check for invalid input
             if line_idx == 0 and (new_path / line).is_dir():
@@ -105,6 +101,10 @@ def read_structure(structure_path):
                 raise BlenDirError(
                     "Invalid Folder name." f" Remove '*' from line {line_idx+1}"
                 )
+
+            if line_idx == 0:
+                # store old folder path
+                props.old_path = str(new_path / line)
 
             if new_depth < previous_depth:
                 # if a subfolder branch is ended
@@ -191,14 +191,7 @@ def new_struct(name, use_template):
         # make blank file
         open(dst, "w").close()
 
-    props = bpy.context.scene.blendir_props
-    props.struct_items.append(name)
-    msg = "No structures? Try adding some!"
-    if msg in props.struct_items:
-        props.struct_items.remove(msg)
-        props.struct_icon = "TRIA_RIGHT"
-    # set enum to the new structure name
-    bpy.context.scene.blendir_props.structure = name
+    structs_add_value(name)
     open_struct(dst)
 
 
@@ -251,6 +244,18 @@ def update_structs(scene, context):
     return items
 
 
+def structs_add_value(value):
+    # add to the structure enum
+    props = bpy.context.scene.blendir_props
+    props.struct_items.append(value)
+    msg = "No structures? Try adding some!"
+    if msg in props.struct_items:
+        props.struct_items.remove(msg)
+        props.struct_icon = "TRIA_RIGHT"
+    # set enum to the new structure name
+    bpy.context.scene.blendir_props.structure = value
+
+
 def structs_remove_value(value):
     props = bpy.context.scene.blendir_props
     if not "No structures? Try adding some!" in props.struct_items:
@@ -265,6 +270,30 @@ def structs_remove_value(value):
         raise BlenDirError("No structures to remove")
 
 
+def import_struct(path):
+    import_name = bpy.context.scene.blendir_props.import_name
+    if import_name == "":
+        raise BlenDirError("The structure name can't be blank")
+    invalid = get_invalid_char(import_name)
+    if invalid is not None:
+        raise BlenDirError("Invalid structure name." f" Remove '{invalid}' from name")
+    if get_active_path(import_name).is_file():
+        raise BlenDirError(f"Structure '{import_name}' already exists")
+
+    with get_active_path(import_name).open("w") as f:
+        initial_path = pathlib.Path(path)
+        initial_depth = len(initial_path.parents)
+        # travel through all folders
+        for dir in os.walk(initial_path):
+            dir_path = pathlib.Path(dir[0])
+            new_depth = len(dir_path.parents)
+            # the depth is the amount of tabs the folder should have
+            curr_depth = new_depth - initial_depth
+            f.write("\t" * curr_depth + dir_path.stem + "\n")
+    structs_add_value(import_name)
+    open_struct(get_active_path())
+
+
 def structs_add_empty():
     props = bpy.context.scene.blendir_props
     if len(props.struct_items) == 0:
@@ -273,7 +302,7 @@ def structs_add_empty():
 
 
 def get_invalid_char(line, skip_keywords=False):
-    invalid = '\/:*?"<>|'
+    invalid = '\/:*?"<>|.'
     if skip_keywords:
         if line.startswith("//"):
             return None
@@ -293,7 +322,9 @@ def get_path():
     return pathlib.Path(__file__).resolve().parent / "structures"
 
 
-def get_active_path():
+def get_active_path(input_struct=None):
+    if input_struct is not None:
+        return get_path() / f"blendir_{input_struct}.txt"
     props = bpy.context.scene.blendir_props
     return get_path() / f"blendir_{props.structure}.txt"
 

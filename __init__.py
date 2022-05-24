@@ -36,6 +36,8 @@ from .blendir_ops import (
     BLENDIR_OT_new_structure,
     BLENDIR_OT_edit_structure,
     BLENDIR_OT_delete_structure,
+    BLENDIR_OT_import_structure,
+    BLENDIR_OT_directory_browser,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -96,6 +98,10 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         description="Show a warning before creating folders after the first time",
         default=True,
     )
+    import_name: StringProperty(
+        name="",
+        description="Enter the name of the structure file that will be imported",
+    )
 
 
 classes = (
@@ -103,6 +109,8 @@ classes = (
     BLENDIR_OT_new_structure,
     BLENDIR_OT_edit_structure,
     BLENDIR_OT_delete_structure,
+    BLENDIR_OT_import_structure,
+    BLENDIR_OT_directory_browser,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,

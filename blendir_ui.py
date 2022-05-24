@@ -28,6 +28,7 @@ class BLENDIR_PT_main(Panel):
         row.operator("blendir.new_structure", text="", icon="FILE_NEW")
         row.operator("blendir.edit_structure", text="", icon="CURRENT_FILE")
         row.operator("blendir.delete_structure", text="", icon="TRASH")
+        row.operator("blendir.import_structure", text="", icon="IMPORT")
         row.operator("blendir.open_blend", text="", icon="FILEBROWSER")
 
 
@@ -69,20 +70,9 @@ class BLENDIR_PT_misc(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
         props = context.scene.blendir_props
         box = layout.box().column()
-
-        row = box.row()
-        row.alignment = "CENTER"
-        row.label(text="Confirm Creation")
-        row.prop(props, "show_create_warning")
-
-        row = box.row()
-        row.alignment = "CENTER"
-        row.label(text="Confirm Deletion")
-        row.prop(props, "show_del_warning")
-
+        box.prop(props, "show_create_warning", text="Confirm Folder Creation")
+        box.prop(props, "show_del_warning", text="Confirm File Deletion")
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")
