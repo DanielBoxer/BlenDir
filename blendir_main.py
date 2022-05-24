@@ -176,6 +176,15 @@ def archive(old_path):
         old_path.rename(new_path)
 
 
+def delete_archive():
+    old_path = bpy.context.scene.blendir_props.old_path
+    archive_path = pathlib.Path(old_path).parent / "BlenDir_Archive"
+    if archive_path.is_dir():
+        shutil.rmtree(archive_path)
+    else:
+        raise BlenDirError("Deletion cancelled; 'BlenDir_Archive' doesn't exist")
+
+
 def new_struct(name, use_template):
     dir = get_path()
     dst = dir / f"blendir_{name}.txt"
@@ -271,16 +280,16 @@ def structs_remove_value(value):
 
 
 def import_struct(path):
-    import_name = bpy.context.scene.blendir_props.import_name
-    if import_name == "":
+    struct_name = bpy.context.scene.blendir_props.struct_name
+    if struct_name == "":
         raise BlenDirError("The structure name can't be blank")
-    invalid = get_invalid_char(import_name)
+    invalid = get_invalid_char(struct_name)
     if invalid is not None:
         raise BlenDirError("Invalid structure name." f" Remove '{invalid}' from name")
-    if get_active_path(import_name).is_file():
-        raise BlenDirError(f"Structure '{import_name}' already exists")
+    if get_active_path(struct_name).is_file():
+        raise BlenDirError(f"Structure '{struct_name}' already exists")
 
-    with get_active_path(import_name).open("w") as f:
+    with get_active_path(struct_name).open("w") as f:
         initial_path = pathlib.Path(path)
         initial_depth = len(initial_path.parents)
         # travel through all folders
@@ -290,7 +299,7 @@ def import_struct(path):
             # the depth is the amount of tabs the folder should have
             curr_depth = new_depth - initial_depth
             f.write("\t" * curr_depth + dir_path.stem + "\n")
-    structs_add_value(import_name)
+    structs_add_value(struct_name)
     open_struct(get_active_path())
 
 

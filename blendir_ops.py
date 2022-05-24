@@ -14,6 +14,7 @@ from .blendir_main import (
     structs_remove_value,
     open_blend,
     import_struct,
+    delete_archive,
     BlenDirError,
 )
 
@@ -33,6 +34,19 @@ class BLENDIR_OT_start(Operator):
     bl_label = "Create Folders"
     bl_description = "Create folder structure"
 
+    del_archive: bpy.props.BoolProperty(
+        name="Delete 'BlenDir_Archive' Folder",
+        description=(
+            "Delete the 'BlenDir_Archive' folder along with all the old folder "
+            "structures that have been moved there. This will also delete the current "
+            "folder structure, as it will be moved to the archive. Make sure you don't "
+            "have any files stored there, because they will be PERMANENTLY deleted"
+        ),
+    )
+    # used so the deletion layout won't be shown immediately after checking the box
+    show_del_layout: bpy.props.BoolProperty()
+    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
+
     def execute(self, context):
         props = context.scene.blendir_props
 
@@ -45,9 +59,30 @@ class BLENDIR_OT_start(Operator):
             self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
 
+        show_warning = (
+            self.del_archive and props.show_del_warning and not self.show_del_layout
+        )
+
         # if folder structure has been created before, archive it
-        if props.old_path != "":
+        if props.old_path != "" and not show_warning:
             archive(props.old_path)
+
+        if show_warning:
+            # show extra deletion warning
+            self.show_del_layout = True
+            return context.window_manager.invoke_props_dialog(self)
+        report_msg = ""
+        if self.del_archive:
+            if self.confirm == "delete":
+                try:
+                    delete_archive()
+                    report_msg += "'BlenDir_Archive' deleted, "
+                except BlenDirError as e:
+                    report_msg += f"{str(e)}, "
+            else:
+                report_msg += "Deletion cancelled, "
+            self.del_archive = False
+            self.show_del_layout = False
 
         try:
             read_structure(get_active_path())
@@ -56,7 +91,7 @@ class BLENDIR_OT_start(Operator):
             archive(props.old_path)
             return {"CANCELLED"}
 
-        self.report({"INFO"}, "Folder structure created")
+        self.report({"INFO"}, f"{report_msg}Folder structure created")
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -67,16 +102,23 @@ class BLENDIR_OT_start(Operator):
         return self.execute(context)
 
     def draw(self, context):
+        props = context.scene.blendir_props
         layout = self.layout
-        box = layout.box()
-        box.label(text="Folder structure has already been created!", icon="ERROR")
-        box.separator(factor=0)
+        if props.show_del_warning and self.show_del_layout:
+            del_layout(self, layout)
+        else:
+            box = layout.box()
+            box.label(text="Folder structure has already been created!", icon="ERROR")
+            row = box.row()
+            row.alignment = "CENTER"
+            row.prop(self, "del_archive")
+            box.separator(factor=0)
 
-        # multiple columns make the items closer together
-        col = box.column().box().column()
-        col.label(text="Press OK to recreate folder structure.")
-        col.label(text="Previous folders will be moved to 'BlenDir_Archive'.")
-        col.label(text="The blender file will be moved to the correct location.")
+            # multiple columns make the items closer together
+            col = box.column().box().column()
+            col.label(text="Press OK to recreate folder structure.")
+            col.label(text="Previous folders will be moved to 'BlenDir_Archive'.")
+            col.label(text="The blender file will be moved to the correct location.")
 
 
 class BLENDIR_OT_new_structure(Operator):
@@ -98,16 +140,14 @@ class BLENDIR_OT_new_structure(Operator):
             ("EMPTY", "Empty File", "Create an empty structure with no comments"),
         ],
     )
-    filename: bpy.props.StringProperty(
-        name="Structure Name", description="Enter the name of the structure"
-    )
 
     def execute(self, context):
+        file_name = context.scene.blendir_props.struct_name
         # check for invalid input
-        if self.filename == "":
+        if file_name == "":
             self.report({"ERROR"}, "The structure name can't be blank")
             return {"CANCELLED"}
-        invalid = get_invalid_char(self.filename)
+        invalid = get_invalid_char(file_name)
         if invalid is not None:
             self.report(
                 {"ERROR"}, "Invalid structure name." f" Remove '{invalid}' from name"
@@ -115,27 +155,28 @@ class BLENDIR_OT_new_structure(Operator):
             return {"CANCELLED"}
 
         try:
-            new_struct(self.filename, self.use_template)
+            new_struct(file_name, self.use_template)
         except BlenDirError as e:
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
-        self.report({"INFO"}, f"Structure '{self.filename}' created")
+        self.report({"INFO"}, f"Structure '{file_name}' created")
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        self.filename = ""
+        context.scene.blendir_props.struct_name = ""
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
+        props = context.scene.blendir_props
 
         box = layout.box()
         row = box.row()
         row.prop(self, "use_template", expand=True)
-        box.prop(self, "filename", icon="SORTALPHA")
+        box.prop(props, "struct_name", icon="SORTALPHA")
 
 
 class BLENDIR_OT_edit_structure(Operator):
@@ -228,7 +269,7 @@ class BLENDIR_OT_import_structure(Operator):
 
         col.separator(factor=2)
         row = col.row()
-        row.prop(props, "import_name", text="Structure Name", icon="SORTALPHA")
+        row.prop(props, "struct_name", icon="SORTALPHA")
 
         row = col.row()
         row.scale_y = 2
@@ -255,8 +296,8 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
         props = context.scene.blendir_props
-        self.report({"INFO"}, f"Structure '{props.import_name}' created")
-        props.import_name = ""
+        self.report({"INFO"}, f"Structure '{props.struct_name}' created")
+        props.struct_name = ""
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -275,7 +316,7 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
         box.separator(factor=0)
         box = box.box()
         box.label(text="Change Structure Name:")
-        box.prop(props, "import_name", icon="SORTALPHA")
+        box.prop(props, "struct_name", text="", icon="SORTALPHA")
 
 
 class BLENDIR_OT_open_blend(Operator):
@@ -286,6 +327,46 @@ class BLENDIR_OT_open_blend(Operator):
     def execute(self, context):
         open_blend(bpy.data.filepath)
         return {"FINISHED"}
+
+
+class BLENDIR_OT_delete_archive(Operator):
+    bl_idname = "blendir.delete_archive"
+    bl_label = "Delete Archive"
+    bl_description = (
+        "Delete the 'BlenDir_Archive' folder along with all the old folder "
+        "structures that have been moved there. Make sure you don't "
+        "have any files stored there, because they will be PERMANENTLY deleted"
+    )
+
+    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
+
+    def execute(self, context):
+        props = context.scene.blendir_props
+        if self.confirm == "delete" or not props.show_del_warning:
+            try:
+                delete_archive()
+            except BlenDirError as e:
+                self.report({"ERROR"}, str(e))
+                return {"CANCELLED"}
+        else:
+            self.report({"INFO"}, "Deletion cancelled")
+            return {"CANCELLED"}
+
+        self.report({"INFO"}, "'BlenDir_Archive' deleted")
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        self.confirm = ""
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        props = context.scene.blendir_props
+        if props.show_del_warning:
+            del_layout(self, layout)
+        else:
+            box = layout.box()
+            box.label(text="Press OK to delete archive", icon="ERROR")
 
 
 class BLENDIR_OT_reset_settings(Operator):

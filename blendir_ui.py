@@ -74,5 +74,6 @@ class BLENDIR_PT_misc(Panel):
         box = layout.box().column()
         box.prop(props, "show_create_warning", text="Confirm Folder Creation")
         box.prop(props, "show_del_warning", text="Confirm File Deletion")
+        box.operator("blendir.delete_archive", icon="TRASH")
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")
