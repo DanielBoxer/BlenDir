@@ -15,6 +15,7 @@ from .blendir_main import (
     open_blend,
     import_struct,
     delete_archive,
+    save_prefs,
     BlenDirError,
 )
 
@@ -371,6 +372,20 @@ class BLENDIR_OT_delete_archive(Operator):
             box.label(text="Press OK to delete archive", icon="ERROR")
 
 
+class BLENDIR_OT_save_settings(Operator):
+    bl_idname = "blendir.save_settings"
+    bl_label = "Save Settings"
+    bl_description = (
+        "All settings will be saved."
+        " These settings will be loaded when Blender is started"
+    )
+
+    def execute(self, context):
+        save_prefs()
+        self.report({"INFO"}, "Blendir settings saved")
+        return {"FINISHED"}
+
+
 class BLENDIR_OT_reset_settings(Operator):
     bl_idname = "blendir.reset_settings"
     bl_label = "Reset Settings"
@@ -382,6 +397,7 @@ class BLENDIR_OT_reset_settings(Operator):
         for prop in props.__annotations__.keys():
             if prop not in skip:
                 props.property_unset(prop)
+        self.report({"INFO"}, "BlenDir settings reset")
         return {"FINISHED"}
 
 
@@ -394,4 +410,5 @@ class BLENDIR_OT_reset(Operator):
         props = context.scene.blendir_props
         for prop in props.__annotations__.keys():
             props.property_unset(prop)
+        self.report({"INFO"}, "BlenDir settings and properties reset")
         return {"FINISHED"}

@@ -8,6 +8,7 @@ import shutil
 from sys import platform
 import os
 import subprocess
+import json
 
 
 def read_structure(structure_path):
@@ -308,6 +309,51 @@ def structs_add_empty():
     if len(props.struct_items) == 0:
         props.struct_items.append("No structures? Try adding some!")
         props.struct_icon = "ERROR"
+
+
+def load_startup():
+    try:
+        path = pathlib.Path(__file__).resolve().parent / "startup.json"
+        with open(path, "r") as f:
+            data = json.load(f)
+            return data
+    except FileNotFoundError:
+        # default settings
+        data = {
+            "structure": 0,
+            "x_input": "",
+            "y_input": "",
+            "z_input": "",
+            "date_format": "YMD",
+            "date_separator": "-",
+            "show_del_warning": True,
+            "show_create_warning": True,
+            "close_sidebar": False,
+        }
+        write_json(data)
+        return data
+
+
+def save_prefs():
+    props = bpy.context.scene.blendir_props
+    data = {}
+    skip = ["old_path", "struct_items", "struct_icon", "struct_name"]
+    for prop in props.__annotations__.keys():
+        if prop not in skip:
+            if prop == "structure":
+                # save int value of structure instead of string id
+                # default value must be int for this property
+                data[prop] = props.get(prop)
+            else:
+                # all properties must be initialized with the correct type in the JSON file
+                data[prop] = getattr(props, prop)
+    write_json(data)
+
+
+def write_json(data):
+    path = pathlib.Path(__file__).resolve().parent / "startup.json"
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
 
 
 def get_invalid_char(line, skip_keywords=False):

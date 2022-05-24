@@ -1,0 +1,11 @@
+{
+    "structure": 0,
+    "x_input": "",
+    "y_input": "",
+    "z_input": "",
+    "date_format": "YMD",
+    "date_separator": "-",
+    "show_del_warning": true,
+    "show_create_warning": true,
+    "close_sidebar": false
+}

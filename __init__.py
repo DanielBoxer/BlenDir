@@ -40,6 +40,7 @@ from .blendir_ops import (
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_delete_archive,
+    BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
 )
@@ -48,7 +49,7 @@ from .blendir_ui import (
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
 )
-from .blendir_main import init_structs, update_structs
+from .blendir_main import init_structs, update_structs, load_startup
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
@@ -57,19 +58,30 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     struct_items = init_structs()[0]
     struct_icon: StringProperty(default=init_structs()[1])
 
+    # load startup data
+    startup_data = load_startup()
+
     # input properties
-    structure: EnumProperty(name="", description="Structure", items=update_structs)
+    structure: EnumProperty(
+        name="",
+        description="Structure",
+        items=update_structs,
+        default=startup_data["structure"],
+    )
     x_input: StringProperty(
         name="",
         description="If a line has '*X', it will be replaced with this field",
+        default=startup_data["x_input"],
     )
     y_input: StringProperty(
         name="",
         description="If a line has '*Y', it will be replaced with this field",
+        default=startup_data["y_input"],
     )
     z_input: StringProperty(
         name="",
         description="If a line has '*Z', it will be replaced with this field",
+        default=startup_data["z_input"],
     )
     date_format: EnumProperty(
         name="",
@@ -79,6 +91,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
             ("MDY", "MM/DD/YYYY", ""),
             ("DMY", "DD/MM/YYYY", ""),
         ],
+        default=startup_data["date_format"],
     )
     date_separator: EnumProperty(
         name="",
@@ -88,26 +101,30 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
             ("_", "Underscore", ""),
             (" ", "None", ""),
         ],
+        default=startup_data["date_separator"],
     )
 
     # misc properties
     show_del_warning: BoolProperty(
-        name="", description="Show an extra warning before deleting files", default=True
+        name="Confirm File Deletion",
+        description="Show an extra warning before deleting files",
+        default=startup_data["show_del_warning"],
     )
     show_create_warning: BoolProperty(
-        name="",
+        name="Confirm Folder Creation",
         description="Show a warning before creating folders after the first time",
-        default=True,
+        default=startup_data["show_create_warning"],
     )
     struct_name: StringProperty(
         name="Structure Name",
         description="Enter the name of the structure",
     )
     close_sidebar: BoolProperty(
-        name="",
+        name="Auto Close Sidebar",
         description=(
             "Automatically close the sidebar after 'Create Folders' button is pressed"
         ),
+        default=startup_data["close_sidebar"],
     )
 
 
@@ -120,6 +137,7 @@ classes = (
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_delete_archive,
+    BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
     BLENDIR_PT_main,
