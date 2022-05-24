@@ -11,6 +11,7 @@ from .blendir_main import (
     get_invalid_char,
     open_struct,
     structs_remove_value,
+    open_blend,
     BlenDirError,
 )
 
@@ -36,6 +37,10 @@ class BLENDIR_OT_start(Operator):
         if not bpy.data.is_saved:
             self.report({"WARNING"}, "Save the file before starting BlenDir")
             bpy.ops.wm.save_mainfile("INVOKE_AREA")
+            return {"CANCELLED"}
+
+        if props.structure == "No structures? Try adding some!":
+            self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
 
         # if folder structure has been created before, archive it
@@ -185,6 +190,16 @@ class BLENDIR_OT_delete_structure(Operator):
         else:
             box = layout.box()
             box.label(text="Press OK to delete structure", icon="ERROR")
+
+
+class BLENDIR_OT_open_blend(Operator):
+    bl_idname = "blendir.open_blend"
+    bl_label = "Open Blender File"
+    bl_description = "Open the location of the current blender file in the file browser"
+
+    def execute(self, context):
+        open_blend(bpy.data.filepath)
+        return {"FINISHED"}
 
 
 class BLENDIR_OT_reset_settings(Operator):

@@ -202,18 +202,28 @@ def new_struct(name, use_template):
     open_struct(dst)
 
 
+def open_file(file):
+    if platform == "win32":
+        os.startfile(file)
+    elif platform == "darwin":
+        subprocess.call(("open", str(file)))
+    else:
+        subprocess.call(("xdg-open", str(file)))
+
+
 def open_struct(file):
     props = bpy.context.scene.blendir_props
     if not "No structures? Try adding some!" in props.struct_items:
         # open file in default text editor
-        if platform == "win32":
-            os.startfile(file)
-        elif platform == "darwin":
-            subprocess.call(("open", str(file)))
-        else:
-            subprocess.call(("xdg-open", str(file)))
+        open_file(file)
     else:
         raise BlenDirError("No structures to edit")
+
+
+def open_blend(file):
+    file = pathlib.Path(file).parent
+    # open file location in default file browser
+    open_file(file)
 
 
 def init_structs():

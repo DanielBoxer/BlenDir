@@ -36,6 +36,7 @@ from .blendir_ops import (
     BLENDIR_OT_new_structure,
     BLENDIR_OT_edit_structure,
     BLENDIR_OT_delete_structure,
+    BLENDIR_OT_open_blend,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
 )
@@ -102,6 +103,7 @@ classes = (
     BLENDIR_OT_new_structure,
     BLENDIR_OT_edit_structure,
     BLENDIR_OT_delete_structure,
+    BLENDIR_OT_open_blend,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
     BLENDIR_PT_main,
