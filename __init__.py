@@ -103,6 +103,12 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         name="Structure Name",
         description="Enter the name of the structure",
     )
+    close_sidebar: BoolProperty(
+        name="",
+        description=(
+            "Automatically close the sidebar after 'Create Folders' button is pressed"
+        ),
+    )
 
 
 classes = (

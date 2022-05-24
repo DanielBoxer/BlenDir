@@ -91,6 +91,8 @@ class BLENDIR_OT_start(Operator):
             archive(props.old_path)
             return {"CANCELLED"}
 
+        if props.close_sidebar:
+            bpy.ops.wm.context_toggle(data_path="space_data.show_region_ui")
         self.report({"INFO"}, f"{report_msg}Folder structure created")
         return {"FINISHED"}
 
