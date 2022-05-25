@@ -18,10 +18,11 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 80, 0),
-    "version": (0, 0, 0),
+    "version": (0, 9, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
+    "warning": "Work in Progress",
 }
 
 
@@ -38,6 +39,7 @@ from .blendir_ops import (
     BLENDIR_OT_delete_structure,
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
+    BLENDIR_OT_save_blend,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_delete_archive,
     BLENDIR_OT_save_settings,
@@ -150,6 +152,9 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     bl_idname = "BlenDir"
 
+    # the previous save location
+    last_path: bpy.props.StringProperty()
+
     def draw(self, context):
         layout = self.layout
         box = layout.box()
@@ -184,6 +189,7 @@ classes = (
     BLENDIR_OT_delete_structure,
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
+    BLENDIR_OT_save_blend,
     BLENDIR_OT_open_blend,
     BLENDIR_OT_delete_archive,
     BLENDIR_OT_save_settings,

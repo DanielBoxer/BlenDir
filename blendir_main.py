@@ -373,6 +373,27 @@ def get_invalid_char(line, skip_keywords=False):
         return None
 
 
+def valid_path(path):
+    path = pathlib.Path(path)
+    # check if path exists
+    if not path.is_dir():
+        # return the next existing parent
+        for parent in path.parents:
+            if parent.exists():
+                return str(parent)
+    return str(path)
+
+
+def valid_filename(path):
+    path = pathlib.Path(path)
+    stem = path.stem
+    invalid = get_invalid_char(stem)
+    if invalid is not None:
+        return invalid
+    new_path = str(path.parent / (stem + ".blend"))
+    return new_path
+
+
 def get_path():
     return pathlib.Path(__file__).resolve().parent / "structures"
 
