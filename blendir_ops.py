@@ -20,33 +20,19 @@ from .blendir_main import (
 )
 
 
-def del_layout(self, layout):
+def del_layout(layout):
     box = layout.box()
     box.label(text="Deletion is permanent!", icon="ERROR")
     box.label(text="Files will NOT be moved to the recycle bin / trash!")
-
     row = box.box().row()
     row.label(text="Enter 'delete' to continue:")
-    row.prop(self, "confirm", icon="TRASH")
+    row.prop(bpy.context.scene.blendir_props, "confirm", icon="TRASH")
 
 
 class BLENDIR_OT_start(Operator):
     bl_idname = "blendir.start"
     bl_label = "Create Folders"
     bl_description = "Create folder structure"
-
-    del_archive: bpy.props.BoolProperty(
-        name="Delete 'BlenDir_Archive' Folder",
-        description=(
-            "Delete the 'BlenDir_Archive' folder along with all the old folder "
-            "structures that have been moved there. This will also delete the current "
-            "folder structure, as it will be moved to the archive. Make sure you don't "
-            "have any files stored there, because they will be PERMANENTLY deleted"
-        ),
-    )
-    # used so the deletion layout won't be shown immediately after checking the box
-    show_del_layout: bpy.props.BoolProperty()
-    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
 
     def execute(self, context):
         props = context.scene.blendir_props
@@ -60,9 +46,9 @@ class BLENDIR_OT_start(Operator):
             self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
 
-        show_warning = (
-            self.del_archive and props.show_del_warning and not self.show_del_layout
-        )
+        del_archive = props.del_archive
+        show_del_layout = props.show_del_layout
+        show_warning = del_archive and props.show_del_warning and not show_del_layout
 
         # if folder structure has been created before, archive it
         if props.old_path != "" and not show_warning:
@@ -70,11 +56,11 @@ class BLENDIR_OT_start(Operator):
 
         if show_warning:
             # show extra deletion warning
-            self.show_del_layout = True
+            props.show_del_layout = True
             return context.window_manager.invoke_props_dialog(self)
         report_msg = ""
-        if self.del_archive:
-            if self.confirm == "delete":
+        if del_archive:
+            if props.confirm == "delete":
                 try:
                     delete_archive()
                     report_msg += "'BlenDir_Archive' deleted, "
@@ -82,8 +68,9 @@ class BLENDIR_OT_start(Operator):
                     report_msg += f"{str(e)}, "
             else:
                 report_msg += "Deletion cancelled, "
-            self.del_archive = False
-            self.show_del_layout = False
+
+            props.del_archive = False
+            props.show_del_layout = False
 
         try:
             read_structure(get_active_path())
@@ -93,12 +80,15 @@ class BLENDIR_OT_start(Operator):
             return {"CANCELLED"}
 
         if props.close_sidebar:
-            bpy.ops.wm.context_toggle(data_path="space_data.show_region_ui")
+            bpy.context.space_data.show_region_ui = False
         self.report({"INFO"}, f"{report_msg}Folder structure created")
         return {"FINISHED"}
 
     def invoke(self, context, event):
         props = context.scene.blendir_props
+        props.del_archive = False
+        props.show_del_layout = False
+        props.confirm = ""
         if props.old_path != "" and props.show_create_warning:
             # if folder structure has been created before, show confirmation menu
             return context.window_manager.invoke_props_dialog(self)
@@ -107,14 +97,14 @@ class BLENDIR_OT_start(Operator):
     def draw(self, context):
         props = context.scene.blendir_props
         layout = self.layout
-        if props.show_del_warning and self.show_del_layout:
-            del_layout(self, layout)
+        if props.show_del_warning and props.show_del_layout:
+            del_layout(layout)
         else:
             box = layout.box()
             box.label(text="Folder structure has already been created!", icon="ERROR")
             row = box.row()
             row.alignment = "CENTER"
-            row.prop(self, "del_archive")
+            row.prop(props, "del_archive")
             box.separator(factor=0)
 
             # multiple columns make the items closer together
@@ -206,13 +196,11 @@ class BLENDIR_OT_delete_structure(Operator):
     bl_label = "Delete Structure"
     bl_description = "Delete the active folder structure file"
 
-    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
-
     def execute(self, context):
         props = context.scene.blendir_props
         struct_name = props.structure
 
-        if self.confirm == "delete" or not props.show_del_warning:
+        if props.confirm == "delete" or not props.show_del_warning:
             try:
                 structs_remove_value(struct_name)
             except BlenDirError as e:
@@ -226,7 +214,7 @@ class BLENDIR_OT_delete_structure(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        self.confirm = ""
+        context.scene.blendir_props.confirm = ""
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
@@ -234,7 +222,7 @@ class BLENDIR_OT_delete_structure(Operator):
         props = context.scene.blendir_props
 
         if props.show_del_warning:
-            del_layout(self, layout)
+            del_layout(layout)
         else:
             box = layout.box()
             box.label(text="Press OK to delete structure", icon="ERROR")
@@ -341,11 +329,9 @@ class BLENDIR_OT_delete_archive(Operator):
         "have any files stored there, because they will be PERMANENTLY deleted"
     )
 
-    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
-
     def execute(self, context):
         props = context.scene.blendir_props
-        if self.confirm == "delete" or not props.show_del_warning:
+        if props.confirm == "delete" or not props.show_del_warning:
             try:
                 delete_archive()
             except BlenDirError as e:
@@ -359,14 +345,14 @@ class BLENDIR_OT_delete_archive(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        self.confirm = ""
+        context.scene.blendir_props.confirm = ""
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
         layout = self.layout
         props = context.scene.blendir_props
         if props.show_del_warning:
-            del_layout(self, layout)
+            del_layout(layout)
         else:
             box = layout.box()
             box.label(text="Press OK to delete archive", icon="ERROR")

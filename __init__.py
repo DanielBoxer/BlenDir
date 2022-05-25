@@ -49,7 +49,11 @@ from .blendir_ui import (
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
 )
-from .blendir_main import init_structs, update_structs, load_startup
+from .blendir_main import (
+    init_structs,
+    update_structs,
+    load_startup,
+)
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
@@ -127,7 +131,52 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         default=startup_data["close_sidebar"],
     )
 
+    # start operator properties are here so they're hidden during keymap draw
+    # this is because the default keymap draw will auto draw all operator properties
+    del_archive: bpy.props.BoolProperty(
+        name="Delete 'BlenDir_Archive' Folder",
+        description=(
+            "Delete the 'BlenDir_Archive' folder along with all the old folder "
+            "structures that have been moved there. This will also delete the current "
+            "folder structure, as it will be moved to the archive. Make sure you don't "
+            "have any files stored there, because they will be PERMANENTLY deleted"
+        ),
+    )
+    # used so the deletion layout won't be shown immediately after checking the box
+    show_del_layout: bpy.props.BoolProperty()
+    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
 
+
+class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
+    bl_idname = "BlenDir"
+
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        row = box.row()
+        row.alignment = "CENTER"
+        row.label(text="Keymap", icon="EVENT_OS")
+        box.separator()
+
+        user_keymaps = context.window_manager.keyconfigs.user.keymaps["3D View"]
+        keymap_items = user_keymaps.keymap_items
+        # update the stored keymap
+        layout.context_pointer_set("keymap", user_keymaps)
+
+        row = box.row()
+        # keymap activation checkbox
+        row.prop(keymap_items["blendir.start"], "active", text="", full_event=True)
+        # keymap input button
+        row.prop(
+            keymap_items["blendir.start"],
+            "type",
+            text=keymap_items["blendir.start"].name,
+            full_event=True,
+        )
+        box.separator(factor=0)
+
+
+keymaps = []
 classes = (
     BLENDIR_OT_start,
     BLENDIR_OT_new_structure,
@@ -144,6 +193,7 @@ classes = (
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
     BLENDIR_PG_properties,
+    BLENDIR_AP_preferences,
 )
 
 
@@ -154,8 +204,22 @@ def register():
         type=BLENDIR_PG_properties
     )
 
+    # add keymaps
+    key_config = bpy.context.window_manager.keyconfigs.addon
+    if key_config:
+        keymap = key_config.keymaps.new("3D View", space_type="VIEW_3D")
+        keymap_item = keymap.keymap_items.new(
+            "blendir.start", type="F", value="PRESS", shift=True, ctrl=True
+        )
+        keymaps.append((keymap, keymap_item))
+
 
 def unregister():
+    # remove keymaps
+    for keymap, keymap_item in keymaps:
+        keymap.keymap_items.remove(keymap_item)
+    keymaps.clear()
+
     del bpy.types.Scene.blendir_props
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
