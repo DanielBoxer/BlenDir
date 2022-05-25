@@ -23,7 +23,7 @@ class BLENDIR_PT_main(Panel):
         row.scale_y = 2
         row.prop(props, "structure", icon="FILE")
 
-        row = box.row()
+        row = box.box().row()
         row.alignment = "CENTER"
         row.operator("blendir.new_structure", text="", icon="FILE_NEW")
         row.operator("blendir.edit_structure", text="", icon="CURRENT_FILE")

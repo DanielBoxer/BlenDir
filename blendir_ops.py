@@ -187,7 +187,7 @@ class BLENDIR_OT_edit_structure(Operator):
     bl_label = "Edit Structure"
     bl_description = (
         "Edit the active folder structure file."
-        " This will open it in the default text editor."
+        " This will open it in the default text editor"
     )
 
     def execute(self, context):
