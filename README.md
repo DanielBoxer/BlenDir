@@ -1,4 +1,4 @@
-# BlenDir v0.9.0 <!-- omit in toc -->
+# BlenDir v0.9.0 (WIP) <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
@@ -17,7 +17,10 @@
   - [Keymap](#keymap)
   - [Save startup settings](#save-startup-settings)
 - [Setup Instructions](#setup-instructions)
+- [BlenDir Workflow Example](#blendir-workflow-example)
 - [Installation](#installation)
+  - [Method 1](#method-1)
+  - [Method 2](#method-2)
 
 ## Features
 
@@ -90,7 +93,16 @@ Add keywords to program the folder structure generator!
 4. Change the `Input` and `Misc` panel settings (optional)
 5. In the `Misc` panel, click `Save Settings` to save a new startup file
 
+## BlenDir Workflow Example
+
+1. Open a new Blender file
+2. Press `Shift` `Ctrl` `F` (default keymap)
+3. Use the BlenDir file browser to save the file
+4. Folders will be created automatically after saving!
+
 ## Installation
+
+### Method 1
 
 - Download the `ZIP` file (don't extract it)
 
@@ -103,3 +115,10 @@ Add keywords to program the folder structure generator!
 - Enable the add-on by checking the box
 
 ![Enable](docs/enable.PNG)
+
+### Method 2
+
+- Download BlenDir
+- Extract the `ZIP` file
+- Move the folder inside the extracted folder into your Blender `addons` directory
+- Enable BlenDir
