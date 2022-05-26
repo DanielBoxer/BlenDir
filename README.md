@@ -1,10 +1,8 @@
-# BlenDir <!-- omit in toc -->
+# BlenDir v0.9.0 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
-![BlenDir Addon](docs/blendir.PNG)
-
----
+<img align="right" src="docs/blendir.PNG">
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -15,16 +13,13 @@
   - [Keywords](#keywords)
   - [Make custom folder structures](#make-custom-folder-structures)
   - [Edit saved folder structures](#edit-saved-folder-structures)
-  - [Delete saved folder structures](#delete-saved-folder-structures)
   - [Open project location](#open-project-location)
+  - [Keymap](#keymap)
   - [Save startup settings](#save-startup-settings)
+- [Setup Instructions](#setup-instructions)
 - [Installation](#installation)
 
----
-
 ## Features
-
----
 
 ### Create complex project folder structure in one click
 
@@ -38,7 +33,9 @@
 
 - Click ![Import Structure](docs/import.PNG)
 - Use the directory browser to select a root folder
+
 ![Directory Browser](docs/directory_browser.PNG)
+
 - The complete folder structure file will be generated automatically
 - This file can be used to recreate the saved structure with one click
 
@@ -55,8 +52,11 @@ Add keywords to program the folder structure generator!
 
 - Click ![New Structure](docs/new_structure.PNG)
 - After entering the name, the new structure will open in your default text editor
+
 ![New Popup](docs/new_popup.PNG)
+
 - Choose `Use Template` to start with extra information about how to create the structure
+
 ![Template](docs/template.PNG)
 
 ### Edit saved folder structures
@@ -64,14 +64,16 @@ Add keywords to program the folder structure generator!
 - Click ![Edit](docs/edit.PNG)
 - The structure will open in the default text editor
 
-### Delete saved folder structures
-
-- Click ![Delete](docs/delete.PNG)
-
 ### Open project location
 
 - Click ![Open](docs/open.PNG)
 - The location of the current Blender file will open in the file browser
+
+### Keymap
+
+- Quickly start BlenDir without having to open the sidebar
+
+![Open](docs/keymap.PNG)
 
 ### Save startup settings
 
@@ -80,11 +82,15 @@ Add keywords to program the folder structure generator!
 
 (For more information, read the tooltips/descriptions of the buttons and settings)
 
----
+## Setup Instructions
+
+1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
+2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the [new structure](#generate-folder-structure-files-from-existing-directories) button to create a folder structure file
+3. Add [keywords](#keywords) to the file for custom functionality (ex. replace the root folder name with *F\*B)
+4. Change the `Input` and `Misc` panel settings (optional)
+5. In the `Misc` panel, click `Save Settings` to save a new startup file
 
 ## Installation
-
----
 
 - Download the `ZIP` file (don't extract it)
 
