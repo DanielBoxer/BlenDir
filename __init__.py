@@ -17,7 +17,7 @@ bl_info = {
     "name": "BlenDir",
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
-    "blender": (2, 80, 0),
+    "blender": (2, 90, 0),
     "version": (0, 9, 3),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",

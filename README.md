@@ -21,6 +21,7 @@
 - [Installation](#installation)
   - [Method 1 (recommended)](#method-1-recommended)
   - [Method 2](#method-2)
+- [Notes](#notes)
 
 ## Features
 
@@ -83,8 +84,6 @@ Add keywords to program the folder structure generator!
 - Click ![Save Settings](docs/save_settings.PNG)
 - The current settings will be saved and loaded when starting Blender
 
-(For more information, read the tooltips/descriptions of the buttons and settings)
-
 ## Setup Instructions
 
 1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
@@ -122,3 +121,8 @@ Add keywords to program the folder structure generator!
 - Extract the `ZIP` file
 - Move the folder inside the extracted folder into your Blender `addons` directory
 - Enable BlenDir
+
+## Notes
+
+- For more information, read the tooltips/descriptions of the buttons and settings
+- BlenDir is for Blender version 2.90 and above
