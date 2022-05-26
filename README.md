@@ -1,4 +1,4 @@
-# BlenDir v0.9.2 (WIP) <!-- omit in toc -->
+# BlenDir v0.9.3 (WIP) <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
@@ -19,7 +19,7 @@
 - [Setup Instructions](#setup-instructions)
 - [BlenDir Workflow Example](#blendir-workflow-example)
 - [Installation](#installation)
-  - [Method 1](#method-1)
+  - [Method 1 (recommended)](#method-1-recommended)
   - [Method 2](#method-2)
 
 ## Features
@@ -102,7 +102,7 @@ Add keywords to program the folder structure generator!
 
 ## Installation
 
-### Method 1
+### Method 1 (recommended)
 
 - Download the `ZIP` file (don't extract it)
 

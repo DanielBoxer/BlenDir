@@ -26,7 +26,7 @@ class BLENDIR_PT_main(Panel):
         row = box.box().row()
         row.alignment = "CENTER"
         row.operator("blendir.new_structure", text="", icon="FILE_NEW")
-        row.operator("blendir.edit_structure", text="", icon="CURRENT_FILE")
+        row.operator("blendir.edit_structure", text="", icon="FILE_TICK")
         row.operator("blendir.delete_structure", text="", icon="TRASH")
         row.operator("blendir.import_structure", text="", icon="IMPORT")
         row.operator("blendir.open_blend", text="", icon="FILEBROWSER")
