@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 80, 0),
-    "version": (0, 9, 0),
+    "version": (0, 9, 2),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -32,6 +32,7 @@ from bpy.props import (
     EnumProperty,
     BoolProperty,
 )
+import pathlib
 from .blendir_ops import (
     BLENDIR_OT_start,
     BLENDIR_OT_new_structure,
@@ -150,7 +151,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
 
 
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
-    bl_idname = "BlenDir"
+    bl_idname = pathlib.Path(__file__).resolve().parent.stem
 
     # the previous save location
     last_path: bpy.props.StringProperty()

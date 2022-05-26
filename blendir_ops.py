@@ -4,6 +4,7 @@
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
+import pathlib
 from .blendir_main import (
     read_structure,
     archive,
@@ -337,7 +338,9 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         # save in chosen location
         bpy.ops.wm.save_as_mainfile(filepath=new_filepath)
         # update the previous save location
-        context.preferences.addons["BlenDir"].preferences.last_path = self.directory
+        context.preferences.addons[
+            pathlib.Path(__file__).resolve().parent.stem
+        ].preferences.last_path = self.directory
         # code from start operator to handle exceptions
         # this is the same as calling the start operator, but since this is the first
         # time running, no archiving or deleting is needed
@@ -354,7 +357,9 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
 
     def invoke(self, context, event):
         # start in previous saved blender file location
-        last_path = context.preferences.addons["BlenDir"].preferences.last_path
+        last_path = context.preferences.addons[
+            pathlib.Path(__file__).resolve().parent.stem
+        ].preferences.last_path
         if last_path != "":
             # check if the path exists
             last_path = valid_path(last_path)

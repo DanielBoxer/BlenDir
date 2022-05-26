@@ -187,7 +187,7 @@ def delete_archive():
 
 
 def new_struct(name, use_template):
-    dir = get_path()
+    dir = get_struct_path()
     dst = dir / f"blendir_{name}.txt"
 
     if dst.is_file():
@@ -233,7 +233,7 @@ def init_structs():
     # add all structure files currently saved
     items = []
     icon = "TRIA_RIGHT"
-    for struct in get_path().iterdir():
+    for struct in get_struct_path().iterdir():
         name = struct.stem.split("blendir_")
         if len(name) > 1:
             items.append(name[1])
@@ -394,15 +394,19 @@ def valid_filename(path):
     return new_path
 
 
-def get_path():
-    return pathlib.Path(__file__).resolve().parent / "structures"
+def get_dir_path():
+    return pathlib.Path(__file__).resolve().parent
+
+
+def get_struct_path():
+    return get_dir_path() / "structures"
 
 
 def get_active_path(input_struct=None):
     if input_struct is not None:
-        return get_path() / f"blendir_{input_struct}.txt"
+        return get_struct_path() / f"blendir_{input_struct}.txt"
     props = bpy.context.scene.blendir_props
-    return get_path() / f"blendir_{props.structure}.txt"
+    return get_struct_path() / f"blendir_{props.structure}.txt"
 
 
 # custom exception
