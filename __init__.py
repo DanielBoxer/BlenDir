@@ -42,7 +42,6 @@ from .blendir_ops import (
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
     BLENDIR_OT_open_blend,
-    BLENDIR_OT_delete_archive,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -134,21 +133,6 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         default=startup_data["close_sidebar"],
     )
 
-    # start operator properties are here so they're hidden during keymap draw
-    # this is because the default keymap draw will auto draw all operator properties
-    del_archive: bpy.props.BoolProperty(
-        name="Delete 'BlenDir_Archive' Folder",
-        description=(
-            "Delete the 'BlenDir_Archive' folder along with all the old folder "
-            "structures that have been moved there. This will also delete the current "
-            "folder structure, as it will be moved to the archive. Make sure you don't "
-            "have any files stored there, because they will be PERMANENTLY deleted"
-        ),
-    )
-    # used so the deletion layout won't be shown immediately after checking the box
-    show_del_layout: bpy.props.BoolProperty()
-    confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
-
 
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     bl_idname = pathlib.Path(__file__).resolve().parent.stem
@@ -192,7 +176,6 @@ classes = (
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
     BLENDIR_OT_open_blend,
-    BLENDIR_OT_delete_archive,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,

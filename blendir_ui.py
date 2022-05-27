@@ -75,7 +75,6 @@ class BLENDIR_PT_misc(Panel):
         box.prop(props, "close_sidebar")
         box.prop(props, "show_create_warning")
         box.prop(props, "show_del_warning")
-        box.operator("blendir.delete_archive", icon="TRASH")
         box.operator("blendir.save_settings", icon="FILE_TICK")
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")

@@ -177,15 +177,6 @@ def archive(old_path):
         old_path.rename(new_path)
 
 
-def delete_archive():
-    old_path = bpy.context.scene.blendir_props.old_path
-    archive_path = pathlib.Path(old_path).parent / "BlenDir_Archive"
-    if archive_path.is_dir():
-        shutil.rmtree(archive_path)
-    else:
-        raise BlenDirError("Deletion cancelled; 'BlenDir_Archive' doesn't exist")
-
-
 def new_struct(name, use_template):
     dir = get_struct_path()
     dst = dir / f"blendir_{name}.txt"
