@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 10, 0),
+    "version": (0, 11, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -41,7 +41,7 @@ from .blendir_ops import (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_open_blend,
+    BLENDIR_OT_open,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -171,15 +171,16 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
         layout.context_pointer_set("keymap", user_keymaps)
 
         row = box.row()
+        id = "blendir.start"
         # keymap activation checkbox
-        row.prop(keymap_items["blendir.start"], "active", text="", full_event=True)
+        row.prop(keymap_items[id], "active", text="", full_event=True)
         # keymap input button
-        row.prop(
-            keymap_items["blendir.start"],
-            "type",
-            text=keymap_items["blendir.start"].name,
-            full_event=True,
-        )
+        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+
+        row = box.row()
+        id = "blendir.open"
+        row.prop(keymap_items[id], "active", text="", full_event=True)
+        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
         box.separator(factor=0)
 
 
@@ -192,7 +193,7 @@ classes = (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_open_blend,
+    BLENDIR_OT_open,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -215,9 +216,15 @@ def register():
     key_config = bpy.context.window_manager.keyconfigs.addon
     if key_config:
         keymap = key_config.keymaps.new("3D View", space_type="VIEW_3D")
+        id = "blendir.start"
         keymap_item = keymap.keymap_items.new(
-            "blendir.start", type="F", value="PRESS", shift=True, ctrl=True
+            id, type="F", value="PRESS", shift=True, ctrl=True
         )
+        keymaps.append((keymap, keymap_item))
+
+        keymap = key_config.keymaps.new("3D View", space_type="VIEW_3D")
+        id = "blendir.open"
+        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
         keymaps.append((keymap, keymap_item))
 
 

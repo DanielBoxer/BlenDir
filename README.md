@@ -1,4 +1,4 @@
-# BlenDir v0.10.0 (WIP) <!-- omit in toc -->
+# BlenDir v0.11.0 (WIP) <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
@@ -12,10 +12,9 @@
   - [Generate folder structure files from existing directories](#generate-folder-structure-files-from-existing-directories)
   - [Keywords](#keywords)
   - [Make custom folder structures](#make-custom-folder-structures)
-  - [Edit saved folder structures](#edit-saved-folder-structures)
-  - [Open project location](#open-project-location)
   - [Keymap](#keymap)
   - [Save startup settings](#save-startup-settings)
+  - [More Features](#more-features)
 - [Setup Instructions](#setup-instructions)
 - [BlenDir Workflow Example](#blendir-workflow-example)
 - [Installation](#installation)
@@ -63,26 +62,21 @@ Add keywords to program the folder structure generator!
 
 ![Template](docs/template.PNG)
 
-### Edit saved folder structures
-
-- Click ![Edit](docs/edit.PNG)
-- The structure will open in the default text editor
-
-### Open project location
-
-- Click ![Open](docs/open.PNG)
-- The location of the current Blender file will open in the file browser
-
 ### Keymap
 
-- Quickly start BlenDir without having to open the sidebar
-
 ![Open](docs/keymap.PNG)
+
+- Create Folders: Quickly start BlenDir without having to open the sidebar
+- Open Folder: Open project folder in the OS file browser
 
 ### Save startup settings
 
 - Click ![Save Settings](docs/save_settings.PNG)
 - The current settings will be saved and loaded when starting Blender
+
+### More Features
+
+- For more information, read the tooltips/descriptions of the buttons and settings
 
 ## Setup Instructions
 
@@ -124,5 +118,4 @@ Add keywords to program the folder structure generator!
 
 ## Notes
 
-- For more information, read the tooltips/descriptions of the buttons and settings
 - BlenDir is for Blender version 2.90 and above

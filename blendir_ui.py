@@ -29,7 +29,7 @@ class BLENDIR_PT_main(Panel):
         row.operator("blendir.edit_structure", text="", icon="FILE_TICK")
         row.operator("blendir.delete_structure", text="", icon="TRASH")
         row.operator("blendir.import_structure", text="", icon="IMPORT")
-        row.operator("blendir.open_blend", text="", icon="FILEBROWSER")
+        row.operator("blendir.open", text="", icon="FILEBROWSER")
 
 
 class BLENDIR_PT_input(Panel):

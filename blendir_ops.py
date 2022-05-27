@@ -354,14 +354,18 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         col.label(text="2. Create folders in chosen location")
 
 
-class BLENDIR_OT_open_blend(Operator):
-    bl_idname = "blendir.open_blend"
-    bl_label = "Open"
+class BLENDIR_OT_open(Operator):
+    bl_idname = "blendir.open"
+    bl_label = "Open Folder"
     bl_description = "Open a folder in the file browser"
 
     def execute(self, context):
         if not bpy.data.is_saved:
-            self.report({"ERROR"}, "The Blender file must be saved")
+            self.report(
+                {"ERROR"},
+                "Save the Blender file before opening the file browser."
+                " Try 'Create Folders'",
+            )
             return {"CANCELLED"}
         props = context.scene.blendir_props
         open_button = props.open_button
