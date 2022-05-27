@@ -180,13 +180,16 @@ def archive(old_path):
 def new_struct(name, use_template):
     dir = get_struct_path()
     dst = dir / f"blendir_{name}.txt"
-
     if dst.is_file():
         raise BlenDirError("Structure exists already. Try a different structure name")
 
     if use_template == "TEMPLATE":
         # copy new.txt template file
         src = dir / "new.txt"
+        if not src.is_file():
+            raise BlenDirError(
+                "Template file not found. Use 'Empty File' to create the structure"
+            )
         shutil.copyfile(src, dst)
     else:
         # make blank file

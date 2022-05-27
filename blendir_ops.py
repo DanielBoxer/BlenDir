@@ -166,7 +166,7 @@ class BLENDIR_OT_delete_structure(Operator):
         props = context.scene.blendir_props
         struct_name = props.structure
 
-        if props.confirm == "delete" or not props.show_del_warning:
+        if self.confirm == "delete" or not props.show_del_warning:
             try:
                 structs_remove_value(struct_name)
             except BlenDirError as e:
@@ -180,7 +180,7 @@ class BLENDIR_OT_delete_structure(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        context.scene.blendir_props.confirm = ""
+        self.confirm = ""
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
