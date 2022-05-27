@@ -41,7 +41,11 @@ class BLENDIR_OT_start(Operator):
 
         # if folder structure has been created before, archive it
         if props.old_path != "":
-            archive(props.old_path)
+            try:
+                archive(props.old_path)
+            except BlenDirError as e:
+                self.report({"ERROR"}, str(e))
+                return {"CANCELLED"}
 
         try:
             read_structure(get_active_path())

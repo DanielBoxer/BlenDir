@@ -129,8 +129,10 @@ def move_blend(new_path):
     curr_blend_path = pathlib.Path(bpy.data.filepath)
     new_blend_path = new_path / curr_blend_path.name
 
-    # move all the backup files (.blend1, .blend2 ...)
+    # the backups have to be moved before the blender file
+    # this is because it will create a backup when saving
     for path in curr_blend_path.parent.iterdir():
+        # move all the backup files (.blend1, .blend2 ...)
         s = path.suffix.split(".blend")
         if (
             path.is_file()
@@ -142,10 +144,13 @@ def move_blend(new_path):
             # the current path is a blender backup file of the current file
             path.rename(new_blend_path.parent / path.name)
 
-    # move blender file to this location
-    # if the blend file is moved first, when it's saved, it will create a backup
-    # this will cause an error when the old backups are moved
-    curr_blend_path.rename(new_blend_path)
+    try:
+        # move blender file to the new location
+        curr_blend_path.rename(new_blend_path)
+    except FileNotFoundError as e:
+        raise BlenDirError(
+            "Error moving the Blender file while archiving. Try reopening the file"
+        ) from e
     # save as, so the filepath is changed in the blender file
     bpy.ops.wm.save_as_mainfile(filepath=str(new_blend_path))
 
