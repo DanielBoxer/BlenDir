@@ -1,4 +1,4 @@
-# BlenDir v0.11.0 (WIP) <!-- omit in toc -->
+# BlenDir v0.12.0 (WIP) <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 

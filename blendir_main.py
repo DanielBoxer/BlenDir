@@ -222,8 +222,10 @@ def open_struct(file):
         raise BlenDirError("No structures to edit")
 
 
-def open_path(path):
-    path = pathlib.Path(path).parent
+def open_path(path, open_project=False):
+    path = pathlib.Path(path)
+    if not open_project:
+        path = path.parent
     # open path in file browser
     open_file(path)
 

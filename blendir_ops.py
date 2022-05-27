@@ -370,6 +370,7 @@ class BLENDIR_OT_open(Operator):
         props = context.scene.blendir_props
         open_button = props.open_button
         path = ""
+        open_project = False
         if open_button == "BLEND":
             path = bpy.data.filepath
         else:
@@ -381,8 +382,10 @@ class BLENDIR_OT_open(Operator):
                 )
                 path = bpy.data.filepath
             else:
+                if open_button == "PROJECT":
+                    open_project = True
                 path = props.old_path
-        open_path(path)
+        open_path(path, open_project)
         return {"FINISHED"}
 
 

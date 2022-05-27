@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 11, 0),
+    "version": (0, 12, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -138,12 +138,17 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         items=[
             (
                 "BLEND",
-                "Open Blend",
+                "Blend",
                 "Open the folder where the current blender file is saved",
             ),
             (
+                "PROJECT",
+                "Project",
+                "Open the project folder",
+            ),
+            (
                 "ROOT",
-                "Open Folder",
+                "Root",
                 "Open the folder above the project folder",
             ),
         ],
