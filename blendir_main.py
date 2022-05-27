@@ -222,10 +222,10 @@ def open_struct(file):
         raise BlenDirError("No structures to edit")
 
 
-def open_blend(file):
-    file = pathlib.Path(file).parent
-    # open file location in default file browser
-    open_file(file)
+def open_path(path):
+    path = pathlib.Path(path).parent
+    # open path in file browser
+    open_file(path)
 
 
 def init_structs():
@@ -328,6 +328,7 @@ def load_startup():
             "show_del_warning": True,
             "show_create_warning": True,
             "close_sidebar": False,
+            "open_button": "BLEND",
         }
         write_json(data)
         return data

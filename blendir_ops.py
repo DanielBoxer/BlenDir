@@ -13,7 +13,7 @@ from .blendir_main import (
     get_invalid_char,
     open_struct,
     structs_remove_value,
-    open_blend,
+    open_path,
     import_struct,
     save_prefs,
     valid_path,
@@ -356,14 +356,29 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
 
 class BLENDIR_OT_open_blend(Operator):
     bl_idname = "blendir.open_blend"
-    bl_label = "Open Blender File"
-    bl_description = "Open the location of the current blender file in the file browser"
+    bl_label = "Open"
+    bl_description = "Open a folder in the file browser"
 
     def execute(self, context):
         if not bpy.data.is_saved:
             self.report({"ERROR"}, "The Blender file must be saved")
             return {"CANCELLED"}
-        open_blend(bpy.data.filepath)
+        props = context.scene.blendir_props
+        open_button = props.open_button
+        path = ""
+        if open_button == "BLEND":
+            path = bpy.data.filepath
+        else:
+            old_path = props.old_path
+            if old_path == "":
+                self.report(
+                    {"WARNING"},
+                    "No project folder created, opening Blender file location instead",
+                )
+                path = bpy.data.filepath
+            else:
+                path = props.old_path
+        open_path(path)
         return {"FINISHED"}
 
 

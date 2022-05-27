@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 9, 5),
+    "version": (0, 10, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -131,6 +131,23 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
             "Automatically close the sidebar after 'Create Folders' button is pressed"
         ),
         default=startup_data["close_sidebar"],
+    )
+    open_button: EnumProperty(
+        name="",
+        description="Behaviour of the 'Open' button",
+        items=[
+            (
+                "BLEND",
+                "Open Blend",
+                "Open the folder where the current blender file is saved",
+            ),
+            (
+                "ROOT",
+                "Open Folder",
+                "Open the folder above the project folder",
+            ),
+        ],
+        default=startup_data["open_button"],
     )
 
 
