@@ -259,7 +259,8 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
 
     def execute(self, context):
         try:
-            import_struct(self.filepath)
+            path = self.filepath
+            import_struct(path, bpy.path.basename(path))
         except BlenDirError as e:
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
@@ -269,24 +270,28 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        # clear initial path
-        self.filepath = ""
+        # set filepath to structure name
+        self.filepath = context.scene.blendir_props.struct_name
         # start in current blender file location
         self.directory = bpy.data.filepath
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
     def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-        props = context.scene.blendir_props
-        box = layout.box()
+        box = self.layout.box()
         box.label(text="BlenDir Directory Browser", icon="FILEBROWSER")
-        box.separator(factor=0)
+        box.separator()
         box = box.box()
-        box.label(text="Change Structure Name:")
-        box.prop(props, "struct_name", text="", icon="SORTALPHA")
+        box.label(text="Choose a directory to import", icon="IMPORT")
+        col = box.column()
+        col.label(text="This directory will be the root folder")
+        col.label(text="All folders inside will be added to the file")
+        col.separator()
+        col.label(text="Structure Name:", icon="SORTALPHA")
+        if self.filepath == self.directory:
+            col.label(text="Unset")
+        else:
+            col.label(text=bpy.path.basename(self.filepath))
 
 
 class BLENDIR_OT_save_blend(Operator, ImportHelper):
@@ -338,12 +343,12 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         return {"RUNNING_MODAL"}
 
     def draw(self, context):
-        layout = self.layout
-        box = layout.box()
-        box.label(text="BlenDir File Browser", icon="FILEBROWSER")
+        box = self.layout.box()
+        box.label(text="BlenDir Save Browser", icon="FILEBROWSER")
         box.separator(factor=0)
         box = box.box()
-        box.label(text="Choose a save location!", icon="FILE_TICK")
+        box.label(text="1. Choose a save location!", icon="FILE_TICK")
+        box.label(text="2. Enter the name of the blend file", icon="SORTALPHA")
         col = box.column()
         col.label(text="Invalid name characters: [  " + '\/:*?"<>|.' + "  ]")
         col.label(text="Adding '.blend' is not necessary.")

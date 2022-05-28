@@ -281,8 +281,7 @@ def structs_remove_value(value):
         raise BlenDirError("No structures to remove")
 
 
-def import_struct(path):
-    struct_name = bpy.context.scene.blendir_props.struct_name
+def import_struct(path, struct_name):
     if struct_name == "":
         raise BlenDirError("The structure name can't be blank")
     invalid = get_invalid_char(struct_name)
@@ -292,10 +291,11 @@ def import_struct(path):
         raise BlenDirError(f"Structure '{struct_name}' already exists")
 
     with get_active_path(struct_name).open("w") as f:
-        initial_path = pathlib.Path(path)
-        initial_depth = len(initial_path.parents)
+        # remove structure name from path
+        path = pathlib.Path(path).parent
+        initial_depth = len(path.parents)
         # travel through all folders
-        for dir in os.walk(initial_path):
+        for dir in os.walk(path):
             dir_path = pathlib.Path(dir[0])
             new_depth = len(dir_path.parents)
             # the depth is the amount of tabs the folder should have
