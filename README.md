@@ -72,7 +72,7 @@ Add keywords to program the folder structure generator!
 ### Save startup settings
 
 - Click ![Save Settings](docs/save_settings.PNG)
-- The current settings will be saved and loaded when starting Blender
+- The current settings will be saved and loaded when starting a new Blender file
 
 ### More Features
 
@@ -119,3 +119,4 @@ Add keywords to program the folder structure generator!
 ## Notes
 
 - BlenDir is for Blender version 2.90 and above
+- Works on Windows and Linux, untested on macOS

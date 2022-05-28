@@ -421,7 +421,11 @@ class BLENDIR_OT_reset_settings(Operator):
 class BLENDIR_OT_reset(Operator):
     bl_idname = "blendir.reset"
     bl_label = "Reset BlenDir"
-    bl_description = "Reset all BlenDir settings and properties to their default values"
+    bl_description = (
+        "Reset all BlenDir settings and properties to their default values."
+        " BlenDir will function similar to how it does when a new Blender file is "
+        "started"
+    )
 
     def execute(self, context):
         props = context.scene.blendir_props
