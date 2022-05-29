@@ -1,4 +1,4 @@
-# BlenDir v0.12.1 (WIP) <!-- omit in toc -->
+# BlenDir v0.12.1 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
@@ -81,7 +81,7 @@ Add keywords to program the folder structure generator!
 ## Setup Instructions
 
 1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
-2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the [new structure](#generate-folder-structure-files-from-existing-directories) button to create a folder structure file
+2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the [new structure](#make-custom-folder-structures) button to create a folder structure file
 3. Add [keywords](#keywords) to the file for custom functionality (ex. replace the root folder name with *F\*B)
 4. Change the `Input` and `Misc` panel settings (optional)
 5. In the `Misc` panel, click `Save Settings` to save a new startup file
@@ -98,9 +98,10 @@ Add keywords to program the folder structure generator!
 ### Method 1 (recommended)
 
 - Download the `ZIP` file (don't extract it)
+  - Either press the `Code` button at the top of the page and then `Download ZIP`
+  - Or go to [Releases](https://github.com/DanielBoxer/BlenDir/releases) and download the latest `ZIP` file
 
-![Download](docs/download.PNG) ![ZIP](docs/zip.PNG)
-
+- Don't add a `.` to the folder name, this will cause an import error
 - In Blender, open `Preferences` and go to `Add-ons`
 - Click `Install`
 - Select the `ZIP` file in the file browser
