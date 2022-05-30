@@ -7,6 +7,5 @@
     "date_separator": "-",
     "show_del_warning": true,
     "show_create_warning": true,
-    "close_sidebar": false,
-    "open_button": "BLEND"
+    "close_sidebar": false
 }

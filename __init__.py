@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 13, 0),
+    "version": (0, 14, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -42,7 +42,6 @@ from .blendir_ops import (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_open,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -135,28 +134,6 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         ),
         default=startup_data["close_sidebar"],
     )
-    open_button: EnumProperty(
-        name="",
-        description="Behaviour of the 'Open' button",
-        items=[
-            (
-                "BLEND",
-                "Blend",
-                "Open the folder where the current blender file is saved",
-            ),
-            (
-                "PROJECT",
-                "Project",
-                "Open the project folder",
-            ),
-            (
-                "ROOT",
-                "Root",
-                "Open the folder above the project folder",
-            ),
-        ],
-        default=startup_data["open_button"],
-    )
 
 
 class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
@@ -197,11 +174,6 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
         row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
         row = box.row()
-        id = "blendir.open"
-        row.prop(keymap_items[id], "active", text="", full_event=True)
-        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-        row = box.row()
         id = "wm.call_menu_pie"
         row.prop(keymap_items[id], "active", text="", full_event=True)
         row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
@@ -217,7 +189,6 @@ classes = (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_open,
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
@@ -252,12 +223,8 @@ def register():
         )
         keymaps.append((keymap, keymap_item))
 
-        id = "blendir.open"
-        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
-        keymaps.append((keymap, keymap_item))
-
         id = "wm.call_menu_pie"
-        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
+        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
         keymap_item.properties.name = "BLENDIR_MT_bookmarks"
         keymaps.append((keymap, keymap_item))
 
