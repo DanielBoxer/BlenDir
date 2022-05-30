@@ -17,6 +17,10 @@ def read_structure(structure_path):
 
     props = bpy.context.scene.blendir_props
     curr_blend_path = pathlib.Path(bpy.data.filepath)
+    # clear bookmarks
+    bookmarks = bpy.context.scene.blendir_bookmarks
+    for bookmark in bookmarks.__annotations__.keys():
+        bookmarks[bookmark] = None
 
     old_path = props.old_path
     if old_path == "":
@@ -40,6 +44,7 @@ def read_structure(structure_path):
 
             new_depth = line.count("\t")
             is_blend_moving = False
+            store_bookmark = False
 
             if new_depth > previous_depth + 1:
                 extra = new_depth - previous_depth - 1
@@ -81,6 +86,9 @@ def read_structure(structure_path):
                 if date_sep != "NONE":
                     date = date[:-1]
                 line = line.replace("*D", date)
+            if "*M" in line:
+                line = line.replace("*M", "")
+                store_bookmark = True
 
             if line.startswith("//") or line == "":
                 if line_idx == 0 and line.startswith("//"):
@@ -104,7 +112,7 @@ def read_structure(structure_path):
                 )
 
             if line_idx == 0:
-                # store old folder path
+                # store old root folder path
                 props.old_path = str(new_path / line)
 
             if new_depth < previous_depth:
@@ -117,6 +125,18 @@ def read_structure(structure_path):
             # when adding a subfolder, it's added to the path with no changes needed
             new_path /= line
             previous_depth = new_depth
+
+            if new_path.is_dir():
+                raise BlenDirError(
+                    f"Folder {line} exists already. Change line {line_idx+1}"
+                )
+
+            if store_bookmark:
+                bookmarks = bpy.context.scene.blendir_bookmarks
+                for bookmark in bookmarks.__annotations__.keys():
+                    if bookmarks[bookmark] is None:
+                        bookmarks[bookmark] = str(new_path)
+                        break
 
             # make folder
             new_path.mkdir()
@@ -222,9 +242,9 @@ def open_struct(file):
         raise BlenDirError("No structures to edit")
 
 
-def open_path(path, open_project=False):
+def open_path(path, open_folder=False):
     path = pathlib.Path(path)
-    if not open_project:
+    if not open_folder:
         path = path.parent
     # open path in file browser
     open_file(path)

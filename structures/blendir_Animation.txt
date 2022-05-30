@@ -1,8 +1,8 @@
-*F*B
-	Assets
+*F*B*M
+	Assets*M
 		Models
 		Textures
-	References
-	Rendered_*D
+	References*M
+	Rendered_*D*M
 		Frames
 			1

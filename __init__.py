@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 12, 1),
+    "version": (0, 13, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -46,11 +46,13 @@ from .blendir_ops import (
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
+    BLENDIR_OT_bookmark,
 )
 from .blendir_ui import (
     BLENDIR_PT_main,
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
+    BLENDIR_MT_bookmarks,
 )
 from .blendir_main import (
     init_structs,
@@ -157,6 +159,17 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     )
 
 
+class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
+    b0: StringProperty()
+    b1: StringProperty()
+    b2: StringProperty()
+    b3: StringProperty()
+    b4: StringProperty()
+    b5: StringProperty()
+    b6: StringProperty()
+    b7: StringProperty()
+
+
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     bl_idname = pathlib.Path(__file__).resolve().parent.stem
 
@@ -187,6 +200,11 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
         id = "blendir.open"
         row.prop(keymap_items[id], "active", text="", full_event=True)
         row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+
+        row = box.row()
+        id = "wm.call_menu_pie"
+        row.prop(keymap_items[id], "active", text="", full_event=True)
+        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
         box.separator(factor=0)
 
 
@@ -203,10 +221,13 @@ classes = (
     BLENDIR_OT_save_settings,
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
+    BLENDIR_OT_bookmark,
     BLENDIR_PT_main,
     BLENDIR_PT_input,
     BLENDIR_PT_misc,
+    BLENDIR_MT_bookmarks,
     BLENDIR_PG_properties,
+    BLENDIR_PG_bookmarks,
     BLENDIR_AP_preferences,
 )
 
@@ -216,6 +237,9 @@ def register():
         bpy.utils.register_class(cls)
     bpy.types.Scene.blendir_props = bpy.props.PointerProperty(
         type=BLENDIR_PG_properties
+    )
+    bpy.types.Scene.blendir_bookmarks = bpy.props.PointerProperty(
+        type=BLENDIR_PG_bookmarks
     )
 
     # add keymaps
@@ -228,9 +252,13 @@ def register():
         )
         keymaps.append((keymap, keymap_item))
 
-        keymap = key_config.keymaps.new("3D View", space_type="VIEW_3D")
         id = "blendir.open"
         keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
+        keymaps.append((keymap, keymap_item))
+
+        id = "wm.call_menu_pie"
+        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
+        keymap_item.properties.name = "BLENDIR_MT_bookmarks"
         keymaps.append((keymap, keymap_item))
 
 
@@ -240,6 +268,7 @@ def unregister():
         keymap.keymap_items.remove(keymap_item)
     keymaps.clear()
 
+    del bpy.types.Scene.blendir_bookmarks
     del bpy.types.Scene.blendir_props
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)

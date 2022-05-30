@@ -438,3 +438,30 @@ class BLENDIR_OT_reset(Operator):
             props.property_unset(prop)
         self.report({"INFO"}, "BlenDir settings and properties reset")
         return {"FINISHED"}
+
+
+class BLENDIR_OT_bookmark(Operator):
+    bl_idname = "blendir.bookmark"
+    bl_label = "Bookmark"
+    bl_description = "Bookmark"
+
+    bookmark: bpy.props.EnumProperty(
+        items=(
+            ("0", "0", ""),
+            ("1", "1", ""),
+            ("2", "2", ""),
+            ("3", "3", ""),
+            ("4", "4", ""),
+            ("5", "5", ""),
+            ("6", "6", ""),
+            ("7", "7", ""),
+        )
+    )
+
+    def execute(self, context):
+        bookmarks = context.scene.blendir_bookmarks
+        for bookmark_idx, bookmark in enumerate(bookmarks.__annotations__.keys()):
+            if bookmark_idx == int(self.bookmark):
+                open_path(bookmarks[bookmark], True)
+                break
+        return {"FINISHED"}

@@ -1,7 +1,9 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
-from bpy.types import Panel
+import bpy
+from bpy.types import Panel, Menu
+import pathlib
 
 
 class BLENDIR_PT_main(Panel):
@@ -81,3 +83,22 @@ class BLENDIR_PT_misc(Panel):
         box.operator("blendir.save_settings", icon="FILE_TICK")
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")
+
+
+class BLENDIR_MT_bookmarks(Menu):
+    bl_label = "Bookmarks"
+
+    def draw(self, context):
+        pie = self.layout.menu_pie()
+        if bpy.data.is_saved:
+            bookmarks = context.scene.blendir_bookmarks
+            # add all the bookmarks to the pie
+            for bookmark_idx, bookmark in enumerate(bookmarks.__annotations__.keys()):
+                if bookmarks[bookmark] is not None:
+                    pie.operator(
+                        "blendir.bookmark",
+                        text=pathlib.Path(bookmarks[bookmark]).stem,
+                        icon="SOLO_ON",
+                    ).bookmark = str(bookmark_idx)
+                else:
+                    break
