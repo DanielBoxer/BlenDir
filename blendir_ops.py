@@ -14,7 +14,7 @@ from .blendir_main import (
     structs_remove_value,
     open_path,
     import_struct,
-    save_prefs,
+    save_default,
     valid_path,
     valid_filename,
     get_preferences,
@@ -62,7 +62,7 @@ class BLENDIR_OT_start(Operator):
 
     def invoke(self, context, event):
         props = context.scene.blendir_props
-        if props.old_path != "" and props.show_create_warning:
+        if props.old_path != "" and get_preferences().show_create_warning:
             # if folder structure has been created before, show confirmation menu
             return context.window_manager.invoke_props_dialog(self)
         return self.execute(context)
@@ -168,10 +168,8 @@ class BLENDIR_OT_delete_structure(Operator):
     confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
 
     def execute(self, context):
-        props = context.scene.blendir_props
-        struct_name = props.structure
-
-        if self.confirm == "delete" or not props.show_del_warning:
+        struct_name = context.scene.blendir_props.structure
+        if self.confirm == "delete" or not get_preferences().show_del_warning:
             try:
                 structs_remove_value(struct_name)
             except BlenDirError as e:
@@ -190,9 +188,7 @@ class BLENDIR_OT_delete_structure(Operator):
 
     def draw(self, context):
         layout = self.layout
-        props = context.scene.blendir_props
-
-        if props.show_del_warning:
+        if get_preferences().show_del_warning:
             box = layout.box()
             box.label(text="Deletion is permanent!", icon="ERROR")
             box.label(text="Files will NOT be moved to the recycle bin / trash!")
@@ -373,49 +369,17 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         col.label(text="2. Create folders in chosen location")
 
 
-class BLENDIR_OT_save_settings(Operator):
-    bl_idname = "blendir.save_settings"
-    bl_label = "Save Settings"
+class BLENDIR_OT_save_default(Operator):
+    bl_idname = "blendir.save_default"
+    bl_label = "Save Default Structure"
     bl_description = (
-        "All settings will be saved."
-        " These settings will be loaded when Blender is started"
+        "Save the default structure."
+        " When Blender is started, this structure will be active"
     )
 
     def execute(self, context):
-        save_prefs()
-        self.report({"INFO"}, "Blendir settings saved")
-        return {"FINISHED"}
-
-
-class BLENDIR_OT_reset_settings(Operator):
-    bl_idname = "blendir.reset_settings"
-    bl_label = "Reset Settings"
-    bl_description = "Reset all settings to their default values"
-
-    def execute(self, context):
-        props = context.scene.blendir_props
-        skip = ["old_path", "struct_items", "struct_icon"]
-        for prop in props.__annotations__.keys():
-            if prop not in skip:
-                props.property_unset(prop)
-        self.report({"INFO"}, "BlenDir settings reset")
-        return {"FINISHED"}
-
-
-class BLENDIR_OT_reset(Operator):
-    bl_idname = "blendir.reset"
-    bl_label = "Reset BlenDir"
-    bl_description = (
-        "Reset all BlenDir settings and properties to their default values."
-        " BlenDir will function similar to how it does when a new Blender file is "
-        "started"
-    )
-
-    def execute(self, context):
-        props = context.scene.blendir_props
-        for prop in props.__annotations__.keys():
-            props.property_unset(prop)
-        self.report({"INFO"}, "BlenDir settings and properties reset")
+        save_default()
+        self.report({"INFO"}, "Default structure saved")
         return {"FINISHED"}
 
 

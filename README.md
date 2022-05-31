@@ -1,6 +1,6 @@
-# BlenDir v0.15.1 <!-- omit in toc -->
+# BlenDir v0.16.0 <!-- omit in toc -->
 
-**BlenDir** is a Blender add-on for automatic folder structure creation!
+**BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
 <img align="right" src="docs/blendir.PNG">
 
@@ -14,7 +14,6 @@
   - [Keywords](#keywords)
   - [Make custom folder structures](#make-custom-folder-structures)
   - [Keymap](#keymap)
-  - [Save startup settings](#save-startup-settings)
   - [More Features](#more-features)
 - [Setup Instructions](#setup-instructions)
 - [BlenDir Workflow Example](#blendir-workflow-example)
@@ -77,11 +76,6 @@ Add keywords to program the folder structure generator!
 - Create Folders: Start BlenDir without having to open the sidebar
 - Bookmarks: Open the folder bookmarks pie menu
 
-### Save startup settings
-
-- Click ![Save Settings](docs/save_settings.PNG)
-- The current settings will be saved and loaded when starting a new Blender file
-
 ### More Features
 
 - For more information, read the tooltips/descriptions of the buttons and settings
@@ -95,7 +89,7 @@ Add keywords to program the folder structure generator!
      - replace the root folder name with *F\*B
      - add *M to all folders you want to bookmark
 
-4. In the `Misc` panel, click `Save Settings` to save a new startup file. This will make the default structure change to the current active structure.
+4. In the preferences, click `Save Default Structure`. The current structure will be saved and set to active when starting a new Blender file
 
 ## BlenDir Workflow Example
 

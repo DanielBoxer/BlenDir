@@ -30,9 +30,11 @@ RootFolder
 // "*F" - will be replaced with the name of the blender file
 //      -> ex. "FolderName_*F",  becomes "FolderName_FileName"
 //
-// "*X", "*Y", "*Z" - will be replaced with custom input from the UI
+// "*X", "*Y", "*Z" - will be replaced with custom input from the preferences
 //
 // "*D" - replaced with the current date
+//
+// "*M" - bookmark the folder for this project only
 //
 // "//" - this is a comment and will be skipped
 //      -> empty lines are also skipped

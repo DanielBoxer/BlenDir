@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 15, 1),
+    "version": (0, 16, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -28,12 +28,7 @@ bl_info = {
 
 
 import bpy
-from bpy.props import (
-    StringProperty,
-    EnumProperty,
-    BoolProperty,
-)
-import pathlib
+from bpy.props import StringProperty, EnumProperty
 from .blendir_ops import (
     BLENDIR_OT_start,
     BLENDIR_OT_new_structure,
@@ -42,17 +37,14 @@ from .blendir_ops import (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_save_settings,
-    BLENDIR_OT_reset_settings,
-    BLENDIR_OT_reset,
+    BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
 )
 from .blendir_ui import (
     BLENDIR_PT_main,
-    BLENDIR_PT_input,
-    BLENDIR_PT_misc,
     BLENDIR_MT_bookmarks,
+    BLENDIR_AP_preferences,
 )
 from .blendir_main import (
     init_structs,
@@ -67,62 +59,12 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     struct_items = init_structs()[0]
     struct_icon: StringProperty(default=init_structs()[1])
 
-    # load startup data
-    startup_data = load_startup()
-
-    # input properties
     structure: EnumProperty(
         name="",
         description="Structure",
         items=update_structs,
-        default=startup_data["structure"],
-    )
-    x_input: StringProperty(
-        name="",
-        description="If a line has '*X', it will be replaced with this field",
-        default=startup_data["x_input"],
-    )
-    y_input: StringProperty(
-        name="",
-        description="If a line has '*Y', it will be replaced with this field",
-        default=startup_data["y_input"],
-    )
-    z_input: StringProperty(
-        name="",
-        description="If a line has '*Z', it will be replaced with this field",
-        default=startup_data["z_input"],
-    )
-    date_format: EnumProperty(
-        name="",
-        description="If a line has '*D', it will be replaced with the current date",
-        items=[
-            ("YMD", "YYYY/MM/DD", ""),
-            ("MDY", "MM/DD/YYYY", ""),
-            ("DMY", "DD/MM/YYYY", ""),
-        ],
-        default=startup_data["date_format"],
-    )
-    date_separator: EnumProperty(
-        name="",
-        description="The character used to separate the year, month and day",
-        items=[
-            ("-", "Dash", ""),
-            ("_", "Underscore", ""),
-            (" ", "None", ""),
-        ],
-        default=startup_data["date_separator"],
-    )
-
-    # misc properties
-    show_del_warning: BoolProperty(
-        name="Confirm File Deletion",
-        description="Show an extra warning before deleting files",
-        default=startup_data["show_del_warning"],
-    )
-    show_create_warning: BoolProperty(
-        name="Confirm Folder Creation",
-        description="Show a warning before creating folders after the first time",
-        default=startup_data["show_create_warning"],
+        # load startup data
+        default=load_startup()["structure"],
     )
     struct_name: StringProperty(
         name="Structure Name",
@@ -141,39 +83,6 @@ class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
     b7: StringProperty()
 
 
-class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
-    bl_idname = pathlib.Path(__file__).resolve().parent.stem
-
-    # the previous save location
-    last_path: bpy.props.StringProperty()
-
-    def draw(self, context):
-        layout = self.layout
-        box = layout.box()
-        row = box.row()
-        row.alignment = "CENTER"
-        row.label(text="Keymap", icon="EVENT_OS")
-        box.separator()
-
-        user_keymaps = context.window_manager.keyconfigs.user.keymaps["3D View"]
-        keymap_items = user_keymaps.keymap_items
-        # update the stored keymap
-        layout.context_pointer_set("keymap", user_keymaps)
-
-        row = box.row()
-        id = "blendir.start"
-        # keymap activation checkbox
-        row.prop(keymap_items[id], "active", text="", full_event=True)
-        # keymap input button
-        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-        row = box.row()
-        id = "wm.call_menu_pie"
-        row.prop(keymap_items[id], "active", text="", full_event=True)
-        row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-        box.separator(factor=0)
-
-
 keymaps = []
 classes = (
     BLENDIR_OT_start,
@@ -183,14 +92,10 @@ classes = (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_save_settings,
-    BLENDIR_OT_reset_settings,
-    BLENDIR_OT_reset,
+    BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_PT_main,
-    BLENDIR_PT_input,
-    BLENDIR_PT_misc,
     BLENDIR_MT_bookmarks,
     BLENDIR_PG_properties,
     BLENDIR_PG_bookmarks,

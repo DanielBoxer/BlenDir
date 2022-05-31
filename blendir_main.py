@@ -63,19 +63,19 @@ def read_structure(structure_path):
                 is_blend_moving = True
                 line = line.replace("*B", "")
             if "*X" in line:
-                line = line.replace("*X", props.x_input)
+                line = line.replace("*X", get_preferences().x_input)
             if "*Y" in line:
-                line = line.replace("*Y", props.y_input)
+                line = line.replace("*Y", get_preferences().y_input)
             if "*Z" in line:
-                line = line.replace("*Z", props.z_input)
+                line = line.replace("*Z", get_preferences().z_input)
             if "*D" in line:
                 year = datetime.now().strftime("%Y")
                 month = datetime.now().strftime("%m")
                 day = datetime.now().strftime("%d")
                 # strip to remove " " if separator is "NONE"
-                date_sep = props.date_separator.strip()
+                date_sep = get_preferences().date_separator.strip()
                 date = ""
-                for char in props.date_format:
+                for char in get_preferences().date_format:
                     if char == "Y":
                         date += year + date_sep
                     elif char == "M":
@@ -340,33 +340,15 @@ def load_startup():
             return data
     except FileNotFoundError:
         # default settings
-        data = {
-            "structure": 0,
-            "x_input": "",
-            "y_input": "",
-            "z_input": "",
-            "date_format": "YMD",
-            "date_separator": "-",
-            "show_del_warning": True,
-            "show_create_warning": True,
-        }
+        data = {"structure": 0}
         write_json(data)
         return data
 
 
-def save_prefs():
-    props = bpy.context.scene.blendir_props
-    data = {}
-    skip = ["old_path", "struct_items", "struct_icon", "struct_name"]
-    for prop in props.__annotations__.keys():
-        if prop not in skip:
-            if prop == "structure":
-                # save int value of structure instead of string id
-                # default value must be int for this property
-                data[prop] = props.get(prop)
-            else:
-                # all properties must be initialized with the correct type in the JSON file
-                data[prop] = getattr(props, prop)
+def save_default():
+    # save int value of structure instead of string id
+    # default value must be int for this property
+    data = {"structure": bpy.context.scene.blendir_props.get("structure")}
     write_json(data)
 
 
