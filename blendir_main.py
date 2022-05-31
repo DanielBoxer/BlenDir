@@ -321,6 +321,18 @@ def import_struct(path, struct_name):
             # the depth is the amount of tabs the folder should have
             curr_depth = new_depth - initial_depth
             f.write("\t" * curr_depth + dir_path.stem + "\n")
+
+        # add keyword information
+        template_path = get_struct_path() / "new.txt"
+        if template_path.is_file():
+            f.write("\n")
+            f.write("\n")
+            with template_path.open("r") as template:
+                for _ in range(17):
+                    template.readline()
+                for line in template:
+                    f.write(line)
+
     structs_add_value(struct_name)
     open_struct(get_active_path())
 
