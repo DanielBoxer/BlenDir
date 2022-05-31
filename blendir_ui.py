@@ -77,7 +77,6 @@ class BLENDIR_PT_misc(Panel):
         layout = self.layout
         props = context.scene.blendir_props
         box = layout.box().column()
-        box.prop(props, "close_sidebar")
         box.prop(props, "show_create_warning")
         box.prop(props, "show_del_warning")
         box.operator("blendir.save_settings", icon="FILE_TICK")

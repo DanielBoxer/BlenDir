@@ -349,7 +349,6 @@ def load_startup():
             "date_separator": "-",
             "show_del_warning": True,
             "show_create_warning": True,
-            "close_sidebar": False,
         }
         write_json(data)
         return data

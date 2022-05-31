@@ -57,8 +57,6 @@ class BLENDIR_OT_start(Operator):
             archive(props.old_path)
             return {"CANCELLED"}
 
-        if props.close_sidebar:
-            context.space_data.show_region_ui = False
         self.report({"INFO"}, "Folder structure created")
         return {"FINISHED"}
 
@@ -345,8 +343,6 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
             self.report({"ERROR"}, str(e))
             archive(props.old_path)
             return {"CANCELLED"}
-        if props.close_sidebar:
-            context.space_data.show_region_ui = False
         self.report({"INFO"}, f"Folder structure created")
         return {"FINISHED"}
 

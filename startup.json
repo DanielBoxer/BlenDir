@@ -6,6 +6,5 @@
     "date_format": "YMD",
     "date_separator": "-",
     "show_del_warning": true,
-    "show_create_warning": true,
-    "close_sidebar": false
+    "show_create_warning": true
 }

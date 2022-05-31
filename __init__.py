@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 15, 0),
+    "version": (0, 15, 1),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -127,13 +127,6 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     struct_name: StringProperty(
         name="Structure Name",
         description="Enter the name of the structure",
-    )
-    close_sidebar: BoolProperty(
-        name="Auto Close Sidebar",
-        description=(
-            "Automatically close the sidebar after 'Create Folders' button is pressed"
-        ),
-        default=startup_data["close_sidebar"],
     )
 
 
