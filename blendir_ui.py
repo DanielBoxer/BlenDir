@@ -4,6 +4,7 @@
 import bpy
 from bpy.types import Panel, Menu
 import pathlib
+from .blendir_main import get_bookmarks
 
 
 class BLENDIR_PT_main(Panel):
@@ -31,6 +32,9 @@ class BLENDIR_PT_main(Panel):
         row.operator("blendir.edit_structure", text="", icon="GREASEPENCIL")
         row.operator("blendir.delete_structure", text="", icon="TRASH")
         row.operator("blendir.import_structure", text="", icon="IMPORT")
+        row.operator(
+            "blendir.directory_browser", text="", icon="BOOKMARKS"
+        ).mode = "BOOKMARK"
 
 
 class BLENDIR_PT_input(Panel):
@@ -76,9 +80,6 @@ class BLENDIR_PT_misc(Panel):
         box.prop(props, "close_sidebar")
         box.prop(props, "show_create_warning")
         box.prop(props, "show_del_warning")
-        row = box.row()
-        # enum appears blank if text is not set
-        row.prop(props, "open_button", expand=True, text=" ")
         box.operator("blendir.save_settings", icon="FILE_TICK")
         box.operator("blendir.reset_settings", icon="SETTINGS")
         box.operator("blendir.reset", icon="FILE_REFRESH")
@@ -89,15 +90,28 @@ class BLENDIR_MT_bookmarks(Menu):
 
     def draw(self, context):
         pie = self.layout.menu_pie()
+        # add all saved bookmarks to the pie
+        saved_bookmarks = get_bookmarks()
+        if saved_bookmarks:
+            for bookmark_idx, bookmark in enumerate(saved_bookmarks):
+                if bookmark != "":
+                    pie.operator(
+                        "blendir.bookmark",
+                        text=pathlib.Path(bookmark).stem,
+                        icon="SOLO_ON",
+                    ).bookmark = str(bookmark_idx)
+
+        # add all project bookmarks
         if bpy.data.is_saved:
+            bookmark_idx = len(saved_bookmarks)
             bookmarks = context.scene.blendir_bookmarks
-            # add all the bookmarks to the pie
-            for bookmark_idx, bookmark in enumerate(bookmarks.__annotations__.keys()):
-                if bookmarks[bookmark] is not None:
+            for bookmark in bookmarks.__annotations__.keys():
+                if bookmarks[bookmark] is not None and bookmark_idx < 8:
                     pie.operator(
                         "blendir.bookmark",
                         text=pathlib.Path(bookmarks[bookmark]).stem,
-                        icon="SOLO_ON",
+                        icon="SOLO_OFF",
                     ).bookmark = str(bookmark_idx)
+                    bookmark_idx += 1
                 else:
                     break

@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 14, 0),
+    "version": (0, 15, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -46,6 +46,7 @@ from .blendir_ops import (
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
     BLENDIR_OT_bookmark,
+    BLENDIR_OT_edit_bookmarks,
 )
 from .blendir_ui import (
     BLENDIR_PT_main,
@@ -193,6 +194,7 @@ classes = (
     BLENDIR_OT_reset_settings,
     BLENDIR_OT_reset,
     BLENDIR_OT_bookmark,
+    BLENDIR_OT_edit_bookmarks,
     BLENDIR_PT_main,
     BLENDIR_PT_input,
     BLENDIR_PT_misc,

@@ -4,7 +4,6 @@
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
-import pathlib
 from .blendir_main import (
     read_structure,
     archive,
@@ -18,6 +17,10 @@ from .blendir_main import (
     save_prefs,
     valid_path,
     valid_filename,
+    get_preferences,
+    add_bookmark,
+    get_bookmarks,
+    open_bookmarks,
     BlenDirError,
 )
 
@@ -244,12 +247,12 @@ class BLENDIR_OT_import_structure(Operator):
             "blendir.directory_browser",
             text="Open Directory Browser",
             icon="FILEBROWSER",
-        )
+        ).mode = "STRUCTURE"
 
 
 class BLENDIR_OT_directory_browser(Operator, ImportHelper):
     bl_idname = "blendir.directory_browser"
-    bl_label = "Create Structure"
+    bl_label = "Start"
     bl_description = "Open the directory browser"
 
     # starting location
@@ -257,21 +260,33 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
     # only show folders
     filter_folder: bpy.props.BoolProperty(default=True)
 
+    mode: bpy.props.EnumProperty(
+        items=[
+            ("STRUCTURE", "0", ""),
+            ("BOOKMARK", "1", ""),
+        ],
+    )
+
     def execute(self, context):
-        try:
-            path = self.filepath
-            import_struct(path, bpy.path.basename(path))
-        except BlenDirError as e:
-            self.report({"ERROR"}, str(e))
-            return {"CANCELLED"}
-        props = context.scene.blendir_props
-        self.report({"INFO"}, f"Structure '{props.struct_name}' created")
-        props.struct_name = ""
+        path = self.filepath
+        if self.mode == "STRUCTURE":
+            try:
+                import_struct(path, bpy.path.basename(path))
+            except BlenDirError as e:
+                self.report({"ERROR"}, str(e))
+                return {"CANCELLED"}
+            props = context.scene.blendir_props
+            self.report({"INFO"}, f"Structure '{props.struct_name}' created")
+            props.struct_name = ""
+        else:
+            add_bookmark(path)
+
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        # set filepath to structure name
-        self.filepath = context.scene.blendir_props.struct_name
+        if self.mode == "STRUCTURE":
+            # set filepath to structure name
+            self.filepath = context.scene.blendir_props.struct_name
         # start in current blender file location
         self.directory = bpy.data.filepath
         context.window_manager.fileselect_add(self)
@@ -282,16 +297,23 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
         box.label(text="BlenDir Directory Browser", icon="FILEBROWSER")
         box.separator()
         box = box.box()
-        box.label(text="Choose a directory to import", icon="IMPORT")
-        col = box.column()
-        col.label(text="This directory will be the root folder")
-        col.label(text="All folders inside will be added to the file")
-        col.separator()
-        col.label(text="Structure Name:", icon="SORTALPHA")
-        if self.filepath == self.directory:
-            col.label(text="Unset")
+        if self.mode == "STRUCTURE":
+            box.label(text="Choose a directory to import", icon="IMPORT")
+            col = box.column()
+            col.label(text="This directory will be the root folder")
+            col.label(text="All folders inside will be added to the file")
+            col.separator()
+            col.label(text="Structure Name:", icon="SORTALPHA")
+            if self.filepath == self.directory:
+                col.label(text="Unset")
+            else:
+                col.label(text=bpy.path.basename(self.filepath))
         else:
-            col.label(text=bpy.path.basename(self.filepath))
+            box.label(text="Choose a directory to bookmark", icon="BOOKMARKS")
+            box.label(text="Press 'Start' to add to bookmarks")
+            box.separator()
+            box = box.box()
+            box.operator("blendir.edit_bookmarks", icon="BOOKMARKS")
 
 
 class BLENDIR_OT_save_blend(Operator, ImportHelper):
@@ -315,9 +337,7 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         # save in chosen location
         bpy.ops.wm.save_as_mainfile(filepath=new_filepath)
         # update the previous save location
-        context.preferences.addons[
-            pathlib.Path(__file__).resolve().parent.stem
-        ].preferences.last_path = self.directory
+        get_preferences().last_path = self.directory
         # code from start operator to handle exceptions
         try:
             read_structure(get_active_path())
@@ -332,9 +352,7 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
 
     def invoke(self, context, event):
         # start in previous saved blender file location
-        last_path = context.preferences.addons[
-            pathlib.Path(__file__).resolve().parent.stem
-        ].preferences.last_path
+        last_path = get_preferences().last_path
         if last_path != "":
             # check if the path exists
             last_path = valid_path(last_path)
@@ -424,9 +442,30 @@ class BLENDIR_OT_bookmark(Operator):
     )
 
     def execute(self, context):
-        bookmarks = context.scene.blendir_bookmarks
-        for bookmark_idx, bookmark in enumerate(bookmarks.__annotations__.keys()):
-            if bookmark_idx == int(self.bookmark):
-                open_path(bookmarks[bookmark], True)
-                break
+        selected = int(self.bookmark)
+        saved_bookmarks = get_bookmarks()
+        if len(saved_bookmarks) > selected:
+            open_path(saved_bookmarks[selected], True)
+        else:
+            bookmarks = context.scene.blendir_bookmarks
+            bookmark_idx = len(saved_bookmarks)
+            for bookmark in bookmarks.__annotations__.keys():
+                if bookmark_idx == selected:
+                    open_path(bookmarks[bookmark], True)
+                    break
+                bookmark_idx += 1
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_edit_bookmarks(Operator):
+    bl_idname = "blendir.edit_bookmarks"
+    bl_label = "Edit Bookmarks"
+    bl_description = "Edit bookmarks"
+
+    def execute(self, context):
+        try:
+            open_bookmarks()
+        except BlenDirError as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
         return {"FINISHED"}

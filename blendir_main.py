@@ -377,6 +377,30 @@ def write_json(data):
         json.dump(data, f, indent=4)
 
 
+def add_bookmark(bookmark):
+    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    with path.open("a") as f:
+        f.write(bookmark + "\n")
+
+
+def get_bookmarks():
+    bookmarks = []
+    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    if path.is_file():
+        with path.open("r") as f:
+            for line in f:
+                bookmarks.append(line.strip())
+    return bookmarks
+
+
+def open_bookmarks():
+    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    if path.is_file():
+        open_file(path)
+    else:
+        raise BlenDirError("No bookmarks to edit, try adding some with the browser")
+
+
 def get_invalid_char(line, skip_keywords=False):
     invalid = '\/:*?"<>|.'
     if skip_keywords:
@@ -428,6 +452,12 @@ def get_active_path(input_struct=None):
         return get_struct_path() / f"blendir_{input_struct}.txt"
     props = bpy.context.scene.blendir_props
     return get_struct_path() / f"blendir_{props.structure}.txt"
+
+
+def get_preferences():
+    return bpy.context.preferences.addons[
+        pathlib.Path(__file__).resolve().parent.stem
+    ].preferences
 
 
 # custom exception

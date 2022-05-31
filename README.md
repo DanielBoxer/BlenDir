@@ -1,4 +1,4 @@
-# BlenDir v0.14.0 <!-- omit in toc -->
+# BlenDir v0.15.0 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation!
 
@@ -9,6 +9,7 @@
 - [Features](#features)
   - [Create complex project folder structure in one click](#create-complex-project-folder-structure-in-one-click)
   - [Easily browse saved folder structures](#easily-browse-saved-folder-structures)
+  - [Bookmarks](#bookmarks)
   - [Generate folder structure files from existing directories](#generate-folder-structure-files-from-existing-directories)
   - [Keywords](#keywords)
   - [Make custom folder structures](#make-custom-folder-structures)
@@ -32,6 +33,12 @@
 
 ![Browse](docs/browse.PNG)
 
+### Bookmarks
+
+Add local and global folder bookmarks that can be opened with a pie menu
+
+![Bookmarks](docs/bookmarks.PNG)
+
 ### Generate folder structure files from existing directories
 
 - Click ![Import Structure](docs/import.PNG)
@@ -50,6 +57,7 @@ Add keywords to program the folder structure generator!
 - `*F` Current file name
 - `*D` Current date
 - `*X` `*Y` `*Z` Custom input
+- `*M` Bookmark this folder for this project only
 
 ### Make custom folder structures
 
@@ -64,10 +72,10 @@ Add keywords to program the folder structure generator!
 
 ### Keymap
 
-![Open](docs/keymap.PNG)
+![Keymap](docs/keymap.PNG)
 
-- Create Folders: Quickly start BlenDir without having to open the sidebar
-- Open Folder: Open project folder in the OS file browser
+- Create Folders: Start BlenDir without having to open the sidebar
+- Bookmarks: Open the folder bookmarks pie menu
 
 ### Save startup settings
 
@@ -82,9 +90,12 @@ Add keywords to program the folder structure generator!
 
 1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
 2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the [new structure](#make-custom-folder-structures) button to create a folder structure file
-3. Add [keywords](#keywords) to the file for custom functionality (ex. replace the root folder name with *F\*B)
-4. Change the `Input` and `Misc` panel settings (optional)
-5. In the `Misc` panel, click `Save Settings` to save a new startup file
+3. Add [keywords](#keywords) to the file for custom functionality. For example:
+
+     - replace the root folder name with *F\*B
+     - add *M to all folders you want to bookmark
+
+4. In the `Misc` panel, click `Save Settings` to save a new startup file. This will make the default structure change to the current active structure.
 
 ## BlenDir Workflow Example
 
