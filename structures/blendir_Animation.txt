@@ -2,7 +2,7 @@
 	Assets*M
 		Models
 		Textures
-	References*M
+	References*R*M
 	Rendered_*D*M
 		Frames
 			1

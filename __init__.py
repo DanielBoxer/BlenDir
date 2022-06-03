@@ -18,17 +18,21 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 16, 1),
+    "version": (0, 17, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
     "tracker_url": "https://github.com/DanielBoxer/BlenDir/issues",
-    "warning": "Work in Progress",
 }
 
 
 import bpy
-from bpy.props import StringProperty, EnumProperty
+from bpy.props import (
+    StringProperty,
+    EnumProperty,
+    BoolProperty,
+)
+import pathlib
 from .blendir_ops import (
     BLENDIR_OT_start,
     BLENDIR_OT_new_structure,
@@ -40,11 +44,13 @@ from .blendir_ops import (
     BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
+    BLENDIR_OT_reference,
 )
 from .blendir_ui import (
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks,
-    BLENDIR_AP_preferences,
+    BLENDIR_MT_references,
+    draw_prefs,
 )
 from .blendir_main import (
     init_structs,
@@ -58,6 +64,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     old_path: StringProperty()
     struct_items = init_structs()[0]
     struct_icon: StringProperty(default=init_structs()[1])
+    reference_path: StringProperty()
 
     structure: EnumProperty(
         name="",
@@ -83,6 +90,57 @@ class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
     b7: StringProperty()
 
 
+class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
+    bl_idname = pathlib.Path(__file__).resolve().parent.stem
+
+    # the previous save location
+    last_path: StringProperty()
+
+    # input properties
+    x_input: StringProperty(
+        name="", description="If a line has '*X', it will be replaced with this field"
+    )
+    y_input: StringProperty(
+        name="", description="If a line has '*Y', it will be replaced with this field"
+    )
+    z_input: StringProperty(
+        name="", description="If a line has '*Z', it will be replaced with this field"
+    )
+    date_format: EnumProperty(
+        name="",
+        description="If a line has '*D', it will be replaced with the current date",
+        items=[
+            ("YMD", "YYYY/MM/DD", ""),
+            ("MDY", "MM/DD/YYYY", ""),
+            ("DMY", "DD/MM/YYYY", ""),
+        ],
+    )
+    date_separator: EnumProperty(
+        name="",
+        description="The character used to separate the year, month and day",
+        items=[
+            ("-", "Dash", ""),
+            ("_", "Underscore", ""),
+            (" ", "None", ""),
+        ],
+    )
+
+    # misc properties
+    show_del_warning: BoolProperty(
+        name="Confirm File Deletion",
+        description="Show an extra warning before deleting files",
+        default=True,
+    )
+    show_create_warning: BoolProperty(
+        name="Confirm Folder Creation",
+        description="Show a warning before creating folders after the first time",
+        default=True,
+    )
+
+    def draw(self, context):
+        draw_prefs(self, context, keymaps)
+
+
 keymaps = []
 classes = (
     BLENDIR_OT_start,
@@ -95,8 +153,10 @@ classes = (
     BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
+    BLENDIR_OT_reference,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks,
+    BLENDIR_MT_references,
     BLENDIR_PG_properties,
     BLENDIR_PG_bookmarks,
     BLENDIR_AP_preferences,
@@ -126,6 +186,10 @@ def register():
         id = "wm.call_menu_pie"
         keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
         keymap_item.properties.name = "BLENDIR_MT_bookmarks"
+        keymaps.append((keymap, keymap_item))
+
+        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
+        keymap_item.properties.name = "BLENDIR_MT_references"
         keymaps.append((keymap, keymap_item))
 
 

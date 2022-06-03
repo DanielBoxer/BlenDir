@@ -45,6 +45,7 @@ def read_structure(structure_path):
             new_depth = line.count("\t")
             is_blend_moving = False
             store_bookmark = False
+            store_ref_path = False
 
             if new_depth > previous_depth + 1:
                 extra = new_depth - previous_depth - 1
@@ -89,6 +90,9 @@ def read_structure(structure_path):
             if "*M" in line:
                 line = line.replace("*M", "")
                 store_bookmark = True
+            if "*R" in line:
+                line = line.replace("*R", "")
+                store_ref_path = True
 
             if line.startswith("//") or line == "":
                 if line_idx == 0 and line.startswith("//"):
@@ -137,6 +141,9 @@ def read_structure(structure_path):
                     if bookmarks[bookmark] is None:
                         bookmarks[bookmark] = str(new_path)
                         break
+
+            if store_ref_path:
+                props.reference_path = str(new_path)
 
             # make folder
             new_path.mkdir()
@@ -392,6 +399,16 @@ def open_bookmarks():
         open_file(path)
     else:
         raise BlenDirError("No bookmarks to edit, try adding some with the browser")
+
+
+def get_references():
+    ref_path = pathlib.Path(bpy.context.scene.blendir_props.reference_path)
+    references = []
+    if ref_path != "":
+        for ref in os.listdir(ref_path):
+            if (ref_path / ref).is_file():
+                references.append(ref)
+    return references, ref_path
 
 
 def get_invalid_char(line, skip_keywords=False):

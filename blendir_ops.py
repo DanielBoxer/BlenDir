@@ -21,6 +21,8 @@ from .blendir_main import (
     add_bookmark,
     get_bookmarks,
     open_bookmarks,
+    get_references,
+    open_file,
     BlenDirError,
 )
 
@@ -428,4 +430,28 @@ class BLENDIR_OT_edit_bookmarks(Operator):
         except BlenDirError as e:
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_reference(Operator):
+    bl_idname = "blendir.reference"
+    bl_label = "Reference"
+    bl_description = "Reference"
+
+    reference: bpy.props.EnumProperty(
+        items=(
+            ("0", "0", ""),
+            ("1", "1", ""),
+            ("2", "2", ""),
+            ("3", "3", ""),
+            ("4", "4", ""),
+            ("5", "5", ""),
+            ("6", "6", ""),
+            ("7", "7", ""),
+        )
+    )
+
+    def execute(self, context):
+        refs = get_references()
+        open_file(refs[1] / refs[0][int(self.reference)])
         return {"FINISHED"}

@@ -1,4 +1,4 @@
-# BlenDir v0.16.1 <!-- omit in toc -->
+# BlenDir v0.17.0 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -10,9 +10,9 @@
   - [Create complex project folder structure in one click](#create-complex-project-folder-structure-in-one-click)
   - [Easily browse saved folder structures](#easily-browse-saved-folder-structures)
   - [Bookmarks](#bookmarks)
+  - [References Menu](#references-menu)
   - [Generate folder structure files from existing directories](#generate-folder-structure-files-from-existing-directories)
   - [Keywords](#keywords)
-  - [Make custom folder structures](#make-custom-folder-structures)
   - [Keymap](#keymap)
   - [More Features](#more-features)
 - [Setup Instructions](#setup-instructions)
@@ -26,7 +26,7 @@
 
 ### Create complex project folder structure in one click
 
-![Create Folders](docs/create_folders.PNG)
+![BlenDir](https://user-images.githubusercontent.com/65575771/171467683-33cff7dd-3283-49f4-96e9-62ec3184f878.gif)
 
 ### Easily browse saved folder structures
 
@@ -34,9 +34,15 @@
 
 ### Bookmarks
 
-Add local and global folder bookmarks that can be opened with a pie menu
+Add local and global folder bookmarks. Selecting a bookmark will open it in the default OS file browser
 
 ![Bookmarks](docs/bookmarks.PNG)
+
+### References Menu
+
+Quickly open your project references with a pie menu
+
+![References](docs/references.PNG)
 
 ### Generate folder structure files from existing directories
 
@@ -50,24 +56,14 @@ Add local and global folder bookmarks that can be opened with a pie menu
 
 ### Keywords
 
-Add keywords to program the folder structure generator!
+Add keywords to your folder structures to program the folder structure generator!
 
 - `*B` Move Blender file to this directory
 - `*F` Current file name
 - `*D` Current date
-- `*X` `*Y` `*Z` Custom input
-- `*M` Bookmark this folder for this project only
-
-### Make custom folder structures
-
-- Click ![New Structure](docs/new_structure.PNG)
-- After entering the name, the new structure will open in your default text editor
-
-![New Popup](docs/new_popup.PNG)
-
-- Choose `Use Template` to start with extra information about how to create the structure
-
-![Template](docs/template.PNG)
+- `*X` `*Y` `*Z` Replaced with input from the preferences
+- `*M` Bookmark this folder. This will add the folder to the `Bookmarks` pie menu for this project only
+- `*R` Mark this folder as the reference folder. All files added to this folder will show up in the `References` pie menu
 
 ### Keymap
 
@@ -75,6 +71,7 @@ Add keywords to program the folder structure generator!
 
 - Create Folders: Start BlenDir without having to open the sidebar
 - Bookmarks: Open the folder bookmarks pie menu
+- References: Open the references pie menu
 
 ### More Features
 
@@ -83,11 +80,12 @@ Add keywords to program the folder structure generator!
 ## Setup Instructions
 
 1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
-2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the [new structure](#make-custom-folder-structures) button to create a folder structure file
+2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the new structure button to create a folder structure file
 3. Add [keywords](#keywords) to the file for custom functionality. For example:
 
-     - replace the root folder name with *F\*B
-     - add *M to all folders you want to bookmark
+     - replace the root folder name with `*F*B`
+     - add `*M` to all folders you want to bookmark
+     - add `*R` to your references folder
 
 4. In the preferences, click `Save Default Structure`. The current structure will be saved and set to active when starting a new Blender file
 
@@ -97,6 +95,7 @@ Add keywords to program the folder structure generator!
 2. Press `Shift` `Ctrl` `F` (default keymap)
 3. Use the BlenDir file browser to save the file
 4. Folders will be created automatically after saving!
+5. If the reference folder is set, you will now be able to quickly open your references when opening this project
 
 ## Installation
 
@@ -112,8 +111,6 @@ Add keywords to program the folder structure generator!
 - Select the `ZIP` file in the file browser
 - Click `Install Add-on`
 - Enable the add-on by checking the box
-
-![Enable](docs/enable.PNG)
 
 ### Method 2
 
