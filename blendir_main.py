@@ -402,9 +402,10 @@ def open_bookmarks():
 
 
 def get_references():
-    ref_path = pathlib.Path(bpy.context.scene.blendir_props.reference_path)
+    ref_path = bpy.context.scene.blendir_props.reference_path
     references = []
     if ref_path != "":
+        ref_path = pathlib.Path(ref_path)
         for ref in os.listdir(ref_path):
             if (ref_path / ref).is_file():
                 references.append(ref)

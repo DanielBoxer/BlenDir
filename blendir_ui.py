@@ -128,8 +128,11 @@ class BLENDIR_MT_references(Menu):
     def draw(self, context):
         pie = self.layout.menu_pie()
         for ref_idx, ref in enumerate(get_references()[0]):
-            pie.operator(
-                "blendir.reference",
-                text=ref,
-                icon="FUND",
-            ).reference = str(ref_idx)
+            if ref_idx < 8:
+                pie.operator(
+                    "blendir.reference",
+                    text=ref,
+                    icon="FUND",
+                ).reference = str(ref_idx)
+            else:
+                break
