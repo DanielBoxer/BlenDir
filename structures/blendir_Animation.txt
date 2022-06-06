@@ -3,6 +3,6 @@
 		Models
 		Textures
 	References*R*M
-	Rendered_*D*M
+	Rendered*O*M
 		Frames
 			1

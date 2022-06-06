@@ -46,6 +46,7 @@ def read_structure(structure_path):
             is_blend_moving = False
             store_bookmark = False
             store_ref_path = False
+            set_render_path = False
 
             if new_depth > previous_depth + 1:
                 extra = new_depth - previous_depth - 1
@@ -93,6 +94,9 @@ def read_structure(structure_path):
             if "*R" in line:
                 line = line.replace("*R", "")
                 store_ref_path = True
+            if "*O" in line:
+                line = line.replace("*O", "")
+                set_render_path = True
 
             if line.startswith("//") or line == "":
                 if line_idx == 0 and line.startswith("//"):
@@ -141,9 +145,11 @@ def read_structure(structure_path):
                     if bookmarks[bookmark] is None:
                         bookmarks[bookmark] = str(new_path)
                         break
-
             if store_ref_path:
                 props.reference_path = str(new_path)
+            if set_render_path:
+                # add separator because it gets removed when casting to string
+                bpy.data.scenes["Scene"].render.filepath = str(new_path) + os.sep
 
             # make folder
             new_path.mkdir()
@@ -335,8 +341,14 @@ def import_struct(path, struct_name):
             f.write("\n")
             f.write("\n")
             with template_path.open("r") as template:
-                for _ in range(17):
-                    template.readline()
+                # skip the example structure
+                for line in template:
+                    if "Keywords (case sensitive)" in line:
+                        f.write(line)
+                        break
+                    else:
+                        template.readline()
+                # write keyword information
                 for line in template:
                     f.write(line)
 
@@ -415,7 +427,7 @@ def get_references():
 def get_invalid_char(line, skip_keywords=False):
     invalid = '\/:*?"<>|.'
     if skip_keywords:
-        if line.startswith("//"):
+        if line.strip().startswith("//"):
             return None
         invalid = invalid.replace("*", "")
     # check for invalid characters

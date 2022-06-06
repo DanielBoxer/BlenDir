@@ -1,0 +1,31 @@
+*F*B*M
+
+// The folder above is the root folder
+// It will be created in the directory where the Blender file is saved
+//
+// Keyword explanation (all keywords will be removed from the folder names on structure creation):
+// *F: The root folder will have the same name as the Blender file
+// *B: The Blender file will be moved to this folder
+// *M: This folder will be added to the bookmarks pie menu for this project only
+
+	Folder1*R
+	
+	// This folder will be one level inside the root folder because of the tab
+	//
+	// Keyword explanation:
+	// *R: All files added to this folder will show up in the references pie menu
+
+		SubFolder1A*D
+
+		// Keyword explanation:
+		// *D: This will be replaced with the current date
+
+		SubFolder1B*X
+
+		// Keyword explanation:
+		// *X: This will be replaced with the the X input field from the preferences
+
+	Folder2*O
+
+	// Keyword explanation:
+	// *O: The animation output path will be set to this folder

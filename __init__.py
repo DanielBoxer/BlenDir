@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 17, 1),
+    "version": (0, 17, 2),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -72,10 +72,6 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
         items=update_structs,
         # load startup data
         default=load_startup()["structure"],
-    )
-    struct_name: StringProperty(
-        name="Structure Name",
-        description="Enter the name of the structure",
     )
 
 

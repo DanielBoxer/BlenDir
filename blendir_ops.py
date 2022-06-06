@@ -104,9 +104,13 @@ class BLENDIR_OT_new_structure(Operator):
             ("EMPTY", "Empty File", "Create an empty structure with no comments"),
         ],
     )
+    struct_name: bpy.props.StringProperty(
+        name="Structure Name",
+        description="Enter the name of the structure",
+    )
 
     def execute(self, context):
-        file_name = context.scene.blendir_props.struct_name
+        file_name = self.struct_name
         # check for invalid input
         if file_name == "":
             self.report({"ERROR"}, "The structure name can't be blank")
@@ -128,19 +132,18 @@ class BLENDIR_OT_new_structure(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        context.scene.blendir_props.struct_name = ""
+        self.struct_name = ""
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-        props = context.scene.blendir_props
 
         box = layout.box()
         row = box.row()
         row.prop(self, "use_template", expand=True)
-        box.prop(props, "struct_name", icon="SORTALPHA")
+        box.prop(self, "struct_name", icon="SORTALPHA")
 
 
 class BLENDIR_OT_edit_structure(Operator):
@@ -210,6 +213,11 @@ class BLENDIR_OT_import_structure(Operator):
         " This will generate a file with the structure of the chosen directory"
     )
 
+    struct_name: bpy.props.StringProperty(
+        name="Structure Name",
+        description="Enter the name of the structure",
+    )
+
     def execute(self, context):
         return {"FINISHED"}
 
@@ -220,7 +228,6 @@ class BLENDIR_OT_import_structure(Operator):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-        props = context.scene.blendir_props
         box = layout.box()
         box.label(
             text="Generate a folder structure file from a directory!",
@@ -234,16 +241,18 @@ class BLENDIR_OT_import_structure(Operator):
 
         col.separator(factor=2)
         row = col.row()
-        row.prop(props, "struct_name", icon="SORTALPHA")
+        row.prop(self, "struct_name", icon="SORTALPHA")
 
         row = col.row()
         row.scale_y = 2
         row.operator_context = "INVOKE_DEFAULT"
-        row.operator(
+        dir_browser = row.operator(
             "blendir.directory_browser",
             text="Open Directory Browser",
             icon="FILEBROWSER",
-        ).mode = "STRUCTURE"
+        )
+        dir_browser.mode = "STRUCTURE"
+        dir_browser.struct_name = self.struct_name
 
 
 class BLENDIR_OT_directory_browser(Operator, ImportHelper):
@@ -262,6 +271,7 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
             ("BOOKMARK", "1", ""),
         ],
     )
+    struct_name: bpy.props.StringProperty()
 
     def execute(self, context):
         path = self.filepath
@@ -271,9 +281,7 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
             except BlenDirError as e:
                 self.report({"ERROR"}, str(e))
                 return {"CANCELLED"}
-            props = context.scene.blendir_props
-            self.report({"INFO"}, f"Structure '{props.struct_name}' created")
-            props.struct_name = ""
+            self.report({"INFO"}, f"Structure '{self.struct_name}' created")
         else:
             add_bookmark(path)
 
@@ -282,7 +290,7 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
     def invoke(self, context, event):
         if self.mode == "STRUCTURE":
             # set filepath to structure name
-            self.filepath = context.scene.blendir_props.struct_name
+            self.filepath = self.struct_name
         # start in current blender file location
         self.directory = bpy.data.filepath
         context.window_manager.fileselect_add(self)
@@ -300,7 +308,7 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
             col.label(text="All folders inside will be added to the file")
             col.separator()
             col.label(text="Structure Name:", icon="SORTALPHA")
-            if self.filepath == self.directory:
+            if self.filepath == "":
                 col.label(text="Unset")
             else:
                 col.label(text=bpy.path.basename(self.filepath))

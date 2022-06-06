@@ -1,6 +1,0 @@
-*F*B
-	Assets
-		Models
-		Textures
-	References
-	Rendered

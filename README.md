@@ -1,4 +1,4 @@
-# BlenDir v0.17.1 <!-- omit in toc -->
+# BlenDir v0.17.2 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -64,6 +64,7 @@ Add keywords to your folder structures to program the folder structure generator
 - `*X` `*Y` `*Z` Replaced with input from the preferences
 - `*M` Bookmark this folder. This will add the folder to the `Bookmarks` pie menu for this project only
 - `*R` Mark this folder as the reference folder. All files added to this folder will show up in the `References` pie menu
+- `*O` Set the animation output path to this folder
 
 ### Keymap
 
@@ -79,13 +80,14 @@ Add keywords to your folder structures to program the folder structure generator
 
 ## Setup Instructions
 
-1. Delete the `Animation` and `Default` demo structures that come with BlenDir (use the BlenDir delete button)
+1. Delete the `Animation` and `Example` demo structures that come with BlenDir (use the BlenDir delete button)
 2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the new structure button to create a folder structure file
 3. Add [keywords](#keywords) to the file for custom functionality. For example:
 
      - replace the root folder name with `*F*B`
      - add `*M` to all folders you want to bookmark
      - add `*R` to your references folder
+     - add `*O` to your render folder
 
 4. In the preferences, click `Save Default Structure`. The current structure will be saved and set to active when starting a new Blender file
 
@@ -102,8 +104,8 @@ Add keywords to your folder structures to program the folder structure generator
 ### Method 1 (recommended)
 
 - Download the `ZIP` file (don't extract it)
-  - Either press the `Code` button at the top of the page and then `Download ZIP`
-  - Or go to [Releases](https://github.com/DanielBoxer/BlenDir/releases) and download the latest `ZIP` file
+  - Either go to [Releases](https://github.com/DanielBoxer/BlenDir/releases/latest) and download the `ZIP` file for the latest stable version
+  - Or press the `Code` button at the top of the page and then `Download ZIP` for the newest experimental version
 
 - Don't add a `.` to the folder name, this will cause an import error
 - In Blender, open `Preferences` and go to `Add-ons`
