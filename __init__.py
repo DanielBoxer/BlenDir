@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 17, 2),
+    "version": (0, 18, 0),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -45,6 +45,8 @@ from .blendir_ops import (
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_reference,
+    BLENDIR_OT_render_animation,
+    BLENDIR_OT_render_image,
 )
 from .blendir_ui import (
     BLENDIR_PT_main,
@@ -65,6 +67,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     struct_items = init_structs()[0]
     struct_icon: StringProperty(default=init_structs()[1])
     reference_path: StringProperty()
+    render_path: StringProperty()
 
     structure: EnumProperty(
         name="",
@@ -91,7 +94,6 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
 
     # the previous save location
     last_path: StringProperty()
-
     # input properties
     x_input: StringProperty(
         name="", description="If a line has '*X', it will be replaced with this field"
@@ -102,6 +104,7 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     z_input: StringProperty(
         name="", description="If a line has '*Z', it will be replaced with this field"
     )
+    # date time properties
     date_format: EnumProperty(
         name="",
         description="If a line has '*D', it will be replaced with the current date",
@@ -109,6 +112,14 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
             ("YMD", "YYYY/MM/DD", ""),
             ("MDY", "MM/DD/YYYY", ""),
             ("DMY", "DD/MM/YYYY", ""),
+        ],
+    )
+    time_format: EnumProperty(
+        name="",
+        description="Time format for image renders",
+        items=[
+            ("HMS", "HH/MM/SS", ""),
+            ("MS", "MM/SS", ""),
         ],
     )
     date_separator: EnumProperty(
@@ -120,7 +131,6 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
             (" ", "None", ""),
         ],
     )
-
     # misc properties
     show_del_warning: BoolProperty(
         name="Confirm File Deletion",
@@ -130,6 +140,21 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     show_create_warning: BoolProperty(
         name="Confirm Folder Creation",
         description="Show a warning before creating folders after the first time",
+        default=True,
+    )
+    # animation folders properties
+    make_frames_folder: BoolProperty(
+        name="Make Folder for Frames",
+        description=(
+            "Make a subfolder in the render folder to hold all the animation folders"
+        ),
+        default=True,
+    )
+    make_animation_folders: BoolProperty(
+        name="Make Animation Folders",
+        description=(
+            "Make a new folder for each animation render and save the frames there"
+        ),
         default=True,
     )
 
@@ -150,6 +175,8 @@ classes = (
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_reference,
+    BLENDIR_OT_render_animation,
+    BLENDIR_OT_render_image,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks,
     BLENDIR_MT_references,
@@ -173,9 +200,9 @@ def register():
     key_config = bpy.context.window_manager.keyconfigs.addon
     if key_config:
         keymap = key_config.keymaps.new("3D View", space_type="VIEW_3D")
-        id = "blendir.start"
+
         keymap_item = keymap.keymap_items.new(
-            id, type="F", value="PRESS", shift=True, ctrl=True
+            "blendir.start", type="F", value="PRESS", shift=True, ctrl=True
         )
         keymaps.append((keymap, keymap_item))
 
@@ -186,6 +213,16 @@ def register():
 
         keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
         keymap_item.properties.name = "BLENDIR_MT_references"
+        keymaps.append((keymap, keymap_item))
+
+        keymap_item = keymap.keymap_items.new(
+            "blendir.render_image", type="F12", value="PRESS", shift=True
+        )
+        keymaps.append((keymap, keymap_item))
+
+        keymap_item = keymap.keymap_items.new(
+            "blendir.render_animation", type="F12", value="PRESS", shift=True, ctrl=True
+        )
         keymaps.append((keymap, keymap_item))
 
 

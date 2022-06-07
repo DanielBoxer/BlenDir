@@ -1,4 +1,4 @@
-# BlenDir v0.17.2 <!-- omit in toc -->
+# BlenDir v0.18.0 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -7,16 +7,18 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Features](#features)
-  - [Create complex project folder structure in one click](#create-complex-project-folder-structure-in-one-click)
-  - [Easily browse saved folder structures](#easily-browse-saved-folder-structures)
+  - [One Click Project Folder Structure](#one-click-project-folder-structure)
+  - [Make Custom Folder Structures](#make-custom-folder-structures)
   - [Bookmarks](#bookmarks)
   - [References Menu](#references-menu)
-  - [Generate folder structure files from existing directories](#generate-folder-structure-files-from-existing-directories)
+  - [Auto Save Image Renders](#auto-save-image-renders)
+  - [Animation Frames Folders](#animation-frames-folders)
   - [Keywords](#keywords)
   - [Keymap](#keymap)
-  - [More Features](#more-features)
 - [Setup Instructions](#setup-instructions)
-- [BlenDir Workflow Example](#blendir-workflow-example)
+- [General Instructions](#general-instructions)
+  - [Automatically Generate Folder Structure Files](#automatically-generate-folder-structure-files)
+  - [BlenDir Workflow Example](#blendir-workflow-example)
 - [Installation](#installation)
   - [Method 1 (recommended)](#method-1-recommended)
   - [Method 2](#method-2)
@@ -24,11 +26,16 @@
 
 ## Features
 
-### Create complex project folder structure in one click
+### One Click Project Folder Structure
 
 ![BlenDir](https://user-images.githubusercontent.com/65575771/171467683-33cff7dd-3283-49f4-96e9-62ec3184f878.gif)
 
-### Easily browse saved folder structures
+### Make Custom Folder Structures
+
+- Automatically [generate](#generate-folder-structure-files-from-existing-directories) folder structures or make them from scratch
+- Add functionality with [keywords](#keywords)
+
+Easily browse your saved folder structures:
 
 ![Browse](docs/browse.PNG)
 
@@ -44,39 +51,39 @@ Quickly open your project references with a pie menu
 
 ![References](docs/references.PNG)
 
-### Generate folder structure files from existing directories
+### Auto Save Image Renders
 
-- Click ![Import Structure](docs/import.PNG)
-- Use the directory browser to select a root folder
+Automatically save image renders to your render folder
 
-![Directory Browser](docs/directory_browser.PNG)
+![Auto Save Image](https://user-images.githubusercontent.com/65575771/172444114-f999af6f-bfbc-4aad-9d0d-56bb9e1d1737.gif)
 
-- The complete folder structure file will be generated automatically
-- This file can be used to recreate the saved structure with one click
+### Animation Frames Folders
+
+When an animation is rendered, a subfolder will be automatically created in the render folder for the frames of the animation
+
+![Animation Folders](https://user-images.githubusercontent.com/65575771/172444538-713edd96-4969-4d76-bd6e-bf8c1cd42407.gif)
 
 ### Keywords
 
-Add keywords to your folder structures to program the folder structure generator!
+Add keywords to program the folder structure generator and add extra features to your folder structures!
 
-- `*B` Move Blender file to this directory
-- `*F` Current file name
-- `*D` Current date
+- `*B` Move the Blender file to this folder
+- `*F` Replaced with the current Blender file name
+- `*D` Replaced with the current date
 - `*X` `*Y` `*Z` Replaced with input from the preferences
 - `*M` Bookmark this folder. This will add the folder to the `Bookmarks` pie menu for this project only
 - `*R` Mark this folder as the reference folder. All files added to this folder will show up in the `References` pie menu
-- `*O` Set the animation output path to this folder
+- `*O` Set the animation output path to this folder. This will also be used to automatically save image renders.
 
 ### Keymap
+
+Use shortcuts to make creating folders even quicker
 
 ![Keymap](docs/keymap.PNG)
 
 - Create Folders: Start BlenDir without having to open the sidebar
 - Bookmarks: Open the folder bookmarks pie menu
 - References: Open the references pie menu
-
-### More Features
-
-- For more information, read the tooltips/descriptions of the buttons and settings
 
 ## Setup Instructions
 
@@ -91,7 +98,19 @@ Add keywords to your folder structures to program the folder structure generator
 
 4. In the preferences, click `Save Default Structure`. The current structure will be saved and set to active when starting a new Blender file
 
-## BlenDir Workflow Example
+## General Instructions
+
+### Automatically Generate Folder Structure Files
+
+- Click ![Import Structure](docs/import.PNG)
+- Use the directory browser to select an existing root folder
+
+![Directory Browser](docs/directory_browser.PNG)
+
+- The complete folder structure file will be generated automatically
+- This file can be used to recreate the saved folder structure
+
+### BlenDir Workflow Example
 
 1. Open a new Blender file
 2. Press `Shift` `Ctrl` `F` (default keymap)

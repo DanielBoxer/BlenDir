@@ -4,5 +4,3 @@
 		Textures
 	References*R*M
 	Rendered*O*M
-		Frames
-			1

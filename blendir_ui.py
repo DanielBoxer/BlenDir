@@ -37,6 +37,16 @@ def draw_prefs(self, context, keymaps):
     row.prop(keymap_item, "active", text="", full_event=True)
     row.prop(keymap_item, "type", text=keymap_item.name, full_event=True)
 
+    row = box.row()
+    id = "blendir.render_image"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+
+    row = box.row()
+    id = "blendir.render_animation"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+
     box.separator(factor=0)
     row = layout.row()
 
@@ -47,14 +57,32 @@ def draw_prefs(self, context, keymaps):
     col.prop(self, "z_input", icon="EVENT_Z")
 
     col = row.box().column()
-    col.label(text="Date", icon="TIME")
-    col.prop(self, "date_format", text="Format")
-    col.prop(self, "date_separator", text="Separator")
+
+    col.label(text="Date and Time", icon="TIME")
+    row = col.row()
+    row.alignment = "LEFT"
+    row.label(text="Date Format")
+    row.prop(self, "date_format")
+    row = col.row()
+    row.alignment = "LEFT"
+    row.label(text="Time Format")
+    row.prop(self, "time_format")
+    row = col.row()
+    row.alignment = "LEFT"
+    # the spaces are to align it with the other enums
+    row.label(text="Separator     ")
+    row.prop(self, "date_separator")
 
     box.separator(factor=0)
     row = layout.row()
 
     col = row.box().column()
+    col.label(text="Animation Folders", icon="RENDER_ANIMATION")
+    col.prop(self, "make_frames_folder")
+    col.prop(self, "make_animation_folders")
+
+    col = row.box().column()
+    col.label(text="Confirmation", icon="CHECKMARK")
     col.prop(self, "show_create_warning")
     col.prop(self, "show_del_warning")
     col.operator("blendir.save_default", icon="FILE_TICK")
@@ -85,6 +113,11 @@ class BLENDIR_PT_main(Panel):
         row.operator("blendir.edit_structure", text="", icon="GREASEPENCIL")
         row.operator("blendir.delete_structure", text="", icon="TRASH")
         row.operator("blendir.import_structure", text="", icon="IMPORT")
+
+        row = box.box().row()
+        row.alignment = "CENTER"
+        row.operator("blendir.render_image", text="", icon="RENDER_STILL")
+        row.operator("blendir.render_animation", text="", icon="RENDER_ANIMATION")
         row.operator(
             "blendir.directory_browser", text="", icon="BOOKMARKS"
         ).mode = "BOOKMARK"

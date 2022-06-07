@@ -71,22 +71,7 @@ def read_structure(structure_path):
             if "*Z" in line:
                 line = line.replace("*Z", get_preferences().z_input)
             if "*D" in line:
-                year = datetime.now().strftime("%Y")
-                month = datetime.now().strftime("%m")
-                day = datetime.now().strftime("%d")
-                # strip to remove " " if separator is "NONE"
-                date_sep = get_preferences().date_separator.strip()
-                date = ""
-                for char in get_preferences().date_format:
-                    if char == "Y":
-                        date += year + date_sep
-                    elif char == "M":
-                        date += month + date_sep
-                    else:
-                        date += day + date_sep
-                # remove last separator
-                if date_sep != "NONE":
-                    date = date[:-1]
+                date = get_datetime()
                 line = line.replace("*D", date)
             if "*M" in line:
                 line = line.replace("*M", "")
@@ -149,7 +134,9 @@ def read_structure(structure_path):
                 props.reference_path = str(new_path)
             if set_render_path:
                 # add separator because it gets removed when casting to string
-                bpy.data.scenes["Scene"].render.filepath = str(new_path) + os.sep
+                render_path = str(new_path) + os.sep
+                bpy.context.scene.render.filepath = render_path
+                props.render_path = render_path
 
             # make folder
             new_path.mkdir()
@@ -424,6 +411,26 @@ def get_references():
     return references, ref_path
 
 
+def make_render_folders():
+    prefs = get_preferences()
+    render_path = pathlib.Path(bpy.context.scene.blendir_props.render_path)
+    if prefs.make_frames_folder:
+        render_path /= "Frames"
+        render_path.mkdir(exist_ok=True)
+    if prefs.make_animation_folders:
+        num = 0
+        # the new folder will be named one number higher than the last
+        for path in render_path.iterdir():
+            if path.is_dir():
+                stem = path.stem
+                if stem.isdigit():
+                    if int(stem) >= num:
+                        num = int(stem) + 1
+        render_path /= str(num)
+        render_path.mkdir()
+    return str(render_path) + os.sep
+
+
 def get_invalid_char(line, skip_keywords=False):
     invalid = '\/:*?"<>|.'
     if skip_keywords:
@@ -460,6 +467,32 @@ def valid_filename(path):
         return invalid
     new_path = str(path.parent / (stem + ".blend"))
     return new_path
+
+
+def get_datetime(get_time=False):
+    prefs = get_preferences()
+    dt = ""
+    # strip to remove " " if separator is "NONE"
+    date_sep = prefs.date_separator.strip()
+
+    for char_idx, char in enumerate(prefs.date_format):
+        if char == "Y":
+            dt += datetime.now().strftime("%Y")
+        elif char == "M":
+            dt += datetime.now().strftime("%m")
+        else:
+            dt += datetime.now().strftime("%d")
+        if char_idx < 2:
+            dt += date_sep
+
+    if get_time:
+        dt += date_sep
+        if prefs.time_format == "HMS":
+            dt += datetime.now().strftime("%H") + date_sep
+        dt += datetime.now().strftime("%M") + date_sep
+        dt += datetime.now().strftime("%S")
+
+    return dt
 
 
 def get_dir_path():

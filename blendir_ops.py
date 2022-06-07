@@ -23,6 +23,8 @@ from .blendir_main import (
     open_bookmarks,
     get_references,
     open_file,
+    get_datetime,
+    make_render_folders,
     BlenDirError,
 )
 
@@ -462,4 +464,33 @@ class BLENDIR_OT_reference(Operator):
     def execute(self, context):
         refs = get_references()
         open_file(refs[1] / refs[0][int(self.reference)])
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_render_image(Operator):
+    bl_idname = "blendir.render_image"
+    bl_label = "Render Image"
+    bl_description = (
+        "Start image render."
+        " This will automatically save the image in the output folder"
+    )
+
+    def execute(self, context):
+        render_path = context.scene.blendir_props.render_path
+        context.scene.render.filepath = render_path + get_datetime(get_time=True)
+        bpy.ops.render.render("INVOKE_DEFAULT", write_still=True, use_viewport=True)
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_render_animation(Operator):
+    bl_idname = "blendir.render_animation"
+    bl_label = "Render Animation"
+    bl_description = (
+        "Start animation render. If set in the preferences, subfolders will be created "
+        "in the output folder. The frames of the animation will be saved there"
+    )
+
+    def execute(self, context):
+        context.scene.render.filepath = make_render_folders()
+        bpy.ops.render.render("INVOKE_DEFAULT", animation=True)
         return {"FINISHED"}
