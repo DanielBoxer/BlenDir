@@ -92,7 +92,7 @@ class BLENDIR_PT_main(Panel):
     bl_label = "BlenDir"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "BlenDir"
+    bl_category = "Tool"
 
     def draw(self, context):
         layout = self.layout
