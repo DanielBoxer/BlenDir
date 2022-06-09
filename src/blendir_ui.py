@@ -4,7 +4,8 @@
 import bpy
 from bpy.types import Panel, Menu
 import pathlib
-from .blendir_main import get_bookmarks, get_preferences, get_references
+from .utils import get_preferences, get_references
+from .bookmark import get_bookmarks
 
 
 def draw_prefs(self, context, keymaps):
