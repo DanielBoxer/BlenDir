@@ -4,7 +4,7 @@
 import bpy
 from bpy.types import Panel, Menu
 import pathlib
-from .blendir_main import get_bookmarks, get_references
+from .blendir_main import get_bookmarks, get_preferences, get_references
 
 
 def draw_prefs(self, context, keymaps):
@@ -85,7 +85,6 @@ def draw_prefs(self, context, keymaps):
     col.label(text="Confirmation", icon="CHECKMARK")
     col.prop(self, "show_create_warning")
     col.prop(self, "show_del_warning")
-    col.operator("blendir.save_default", icon="FILE_TICK")
 
 
 class BLENDIR_PT_main(Panel):
@@ -96,7 +95,6 @@ class BLENDIR_PT_main(Panel):
 
     def draw(self, context):
         layout = self.layout
-        props = context.scene.blendir_props
         box = layout.box()
 
         row = box.row()
@@ -105,7 +103,7 @@ class BLENDIR_PT_main(Panel):
 
         row = box.row()
         row.scale_y = 2
-        row.prop(props, "structure", icon="FILE")
+        row.prop(get_preferences(), "structure", icon="FILE")
 
         row = box.box().row()
         row.alignment = "CENTER"

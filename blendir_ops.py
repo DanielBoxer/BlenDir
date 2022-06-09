@@ -14,7 +14,6 @@ from .blendir_main import (
     structs_remove_value,
     open_path,
     import_struct,
-    save_default,
     valid_path,
     valid_filename,
     get_preferences,
@@ -42,7 +41,7 @@ class BLENDIR_OT_start(Operator):
             bpy.ops.blendir.save_blend("INVOKE_DEFAULT")
             return {"CANCELLED"}
 
-        if props.structure == "No structures? Try adding some!":
+        if get_preferences().structure == "No structures? Try adding some!":
             self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
 
@@ -157,13 +156,12 @@ class BLENDIR_OT_edit_structure(Operator):
     )
 
     def execute(self, context):
-        props = context.scene.blendir_props
         try:
             open_struct(get_active_path())
         except BlenDirError as e:
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
-        self.report({"INFO"}, f"Editing structure '{props.structure}'")
+        self.report({"INFO"}, f"Editing structure '{get_preferences().structure}'")
         return {"FINISHED"}
 
 
@@ -175,7 +173,7 @@ class BLENDIR_OT_delete_structure(Operator):
     confirm: bpy.props.StringProperty(name="", description="Enter 'delete' to confirm")
 
     def execute(self, context):
-        struct_name = context.scene.blendir_props.structure
+        struct_name = get_preferences().structure
         if self.confirm == "delete" or not get_preferences().show_del_warning:
             try:
                 structs_remove_value(struct_name)
@@ -329,8 +327,7 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
     directory: bpy.props.StringProperty()
 
     def execute(self, context):
-        props = context.scene.blendir_props
-        if props.structure == "No structures? Try adding some!":
+        if get_preferences().structure == "No structures? Try adding some!":
             self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
         if self.filepath == self.directory:
@@ -349,7 +346,7 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
             read_structure(get_active_path())
         except BlenDirError as e:
             self.report({"ERROR"}, str(e))
-            archive(props.old_path)
+            archive(context.scene.blendir_props.old_path)
             return {"CANCELLED"}
         self.report({"INFO"}, f"Folder structure created")
         return {"FINISHED"}
@@ -379,20 +376,6 @@ class BLENDIR_OT_save_blend(Operator, ImportHelper):
         col.label(text="The 'Start BlenDir' button will:")
         col.label(text="1. Save the Blender file")
         col.label(text="2. Create folders in chosen location")
-
-
-class BLENDIR_OT_save_default(Operator):
-    bl_idname = "blendir.save_default"
-    bl_label = "Save Default Structure"
-    bl_description = (
-        "Save the default structure."
-        " When Blender is started, this structure will be active"
-    )
-
-    def execute(self, context):
-        save_default()
-        self.report({"INFO"}, "Default structure saved")
-        return {"FINISHED"}
 
 
 class BLENDIR_OT_bookmark(Operator):

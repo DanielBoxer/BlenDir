@@ -1,4 +1,4 @@
-# BlenDir v0.18.0 <!-- omit in toc -->
+# BlenDir v0.18.1 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -18,7 +18,6 @@
 - [Setup Instructions](#setup-instructions)
 - [General Instructions](#general-instructions)
   - [Automatically Generate Folder Structure Files](#automatically-generate-folder-structure-files)
-  - [BlenDir Workflow Example](#blendir-workflow-example)
 - [Installation](#installation)
   - [Method 1 (recommended)](#method-1-recommended)
   - [Method 2](#method-2)
@@ -34,56 +33,51 @@
 
 - Automatically [generate](#generate-folder-structure-files-from-existing-directories) folder structures or make them from scratch
 - Add functionality with [keywords](#keywords)
-
-Easily browse your saved folder structures:
+- Easily browse your saved folder structures
 
 ![Browse](docs/browse.PNG)
 
 ### Bookmarks
 
-Add local and global folder bookmarks. Selecting a bookmark will open it in the default OS file browser
+- Add local and global folder bookmarks. Selecting a bookmark will open it in the default OS file browser
 
 ![Bookmarks](docs/bookmarks.PNG)
 
 ### References Menu
 
-Quickly open your project references with a pie menu
+- Quickly open your project references with a pie menu
 
 ![References](docs/references.PNG)
 
 ### Auto Save Image Renders
 
-Automatically save image renders to your render folder
+- Automatically save image renders to your render folder
 
 ![Auto Save Image](https://user-images.githubusercontent.com/65575771/172444114-f999af6f-bfbc-4aad-9d0d-56bb9e1d1737.gif)
 
 ### Animation Frames Folders
 
-When an animation is rendered, a subfolder will be automatically created in the render folder for the frames of the animation
+- When an animation is rendered, a subfolder will be automatically created in the render folder for the frames of the animation
 
 ![Animation Folders](https://user-images.githubusercontent.com/65575771/172444538-713edd96-4969-4d76-bd6e-bf8c1cd42407.gif)
 
 ### Keywords
 
-Add keywords to program the folder structure generator and add extra features to your folder structures!
+- Add keywords to program the folder structure generator and add extra features to your folder structures!
 
-- `*B` Move the Blender file to this folder
-- `*F` Replaced with the current Blender file name
-- `*D` Replaced with the current date
-- `*X` `*Y` `*Z` Replaced with input from the preferences
-- `*M` Bookmark this folder. This will add the folder to the `Bookmarks` pie menu for this project only
-- `*R` Mark this folder as the reference folder. All files added to this folder will show up in the `References` pie menu
-- `*O` Set the animation output path to this folder. This will also be used to automatically save image renders.
+  - `*B` Move the Blender file to this folder
+  - `*F` Replaced with the current Blender file name
+  - `*D` Replaced with the current date
+  - `*X` `*Y` `*Z` Replaced with input from the preferences
+  - `*M` Bookmark this folder. This will add the folder to the `Bookmarks` pie menu for this project only
+  - `*R` Mark this folder as the reference folder. All files added to this folder will show up in the `References` pie menu
+  - `*O` Set the animation output path to this folder. This will also be used to automatically save image renders.
 
 ### Keymap
 
-Use shortcuts to make creating folders even quicker
+- Use shortcuts to make creating folders even quicker
 
 ![Keymap](docs/keymap.PNG)
-
-- Create Folders: Start BlenDir without having to open the sidebar
-- Bookmarks: Open the folder bookmarks pie menu
-- References: Open the references pie menu
 
 ## Setup Instructions
 
@@ -96,8 +90,6 @@ Use shortcuts to make creating folders even quicker
      - add `*R` to your references folder
      - add `*O` to your render folder
 
-4. In the preferences, click `Save Default Structure`. The current structure will be saved and set to active when starting a new Blender file
-
 ## General Instructions
 
 ### Automatically Generate Folder Structure Files
@@ -109,14 +101,6 @@ Use shortcuts to make creating folders even quicker
 
 - The complete folder structure file will be generated automatically
 - This file can be used to recreate the saved folder structure
-
-### BlenDir Workflow Example
-
-1. Open a new Blender file
-2. Press `Shift` `Ctrl` `F` (default keymap)
-3. Use the BlenDir file browser to save the file
-4. Folders will be created automatically after saving!
-5. If the reference folder is set, you will now be able to quickly open your references when opening this project
 
 ## Installation
 

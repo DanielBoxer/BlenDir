@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 18, 0),
+    "version": (0, 18, 1),
     "location": "View3D > Sidebar > BlenDir",
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
@@ -41,7 +41,6 @@ from .blendir_ops import (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_reference,
@@ -54,28 +53,14 @@ from .blendir_ui import (
     BLENDIR_MT_references,
     draw_prefs,
 )
-from .blendir_main import (
-    init_structs,
-    update_structs,
-    load_startup,
-)
+from .blendir_main import init_structs, update_structs
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     # non UI properties
     old_path: StringProperty()
-    struct_items = init_structs()[0]
-    struct_icon: StringProperty(default=init_structs()[1])
     reference_path: StringProperty()
     render_path: StringProperty()
-
-    structure: EnumProperty(
-        name="",
-        description="Structure",
-        items=update_structs,
-        # load startup data
-        default=load_startup()["structure"],
-    )
 
 
 class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
@@ -90,7 +75,12 @@ class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
 
 
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
-    bl_idname = pathlib.Path(__file__).resolve().parent.stem
+    bl_idname = pathlib.Path(__file__).parent.stem
+
+    struct_data = init_structs()
+    struct_items = struct_data[0]
+    struct_icon = struct_data[1]
+    structure: EnumProperty(name="", description="Structure", items=update_structs)
 
     # the previous save location
     last_path: StringProperty()
@@ -171,7 +161,6 @@ classes = (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_save_default,
     BLENDIR_OT_bookmark,
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_reference,

@@ -8,7 +8,6 @@ import shutil
 from sys import platform
 import os
 import subprocess
-import json
 
 
 def read_structure(structure_path):
@@ -234,8 +233,7 @@ def open_file(file):
 
 
 def open_struct(file):
-    props = bpy.context.scene.blendir_props
-    if not "No structures? Try adding some!" in props.struct_items:
+    if not "No structures? Try adding some!" in get_preferences().struct_items:
         # open file in default text editor
         open_file(file)
     else:
@@ -267,35 +265,34 @@ def init_structs():
 
 def update_structs(scene, context):
     # scene and context params are needed for this callback function
-    props = context.scene.blendir_props
-    icon = props.struct_icon
+    prefs = get_preferences()
+    icon = prefs.struct_icon
     items = []
-    for item_idx, item in enumerate(props.struct_items):
+    for item_idx, item in enumerate(prefs.struct_items):
         items.append((item, item, "", icon, item_idx))
     return items
 
 
 def structs_add_value(value):
     # add to the structure enum
-    props = bpy.context.scene.blendir_props
-    props.struct_items.append(value)
+    prefs = get_preferences()
+    prefs.struct_items.append(value)
     msg = "No structures? Try adding some!"
-    if msg in props.struct_items:
-        props.struct_items.remove(msg)
-        props.struct_icon = "TRIA_RIGHT"
+    if msg in prefs.struct_items:
+        prefs.struct_items.remove(msg)
+        prefs.struct_icon = "TRIA_RIGHT"
     # set enum to the new structure name
-    bpy.context.scene.blendir_props.structure = value
+    prefs.structure = value
 
 
 def structs_remove_value(value):
-    props = bpy.context.scene.blendir_props
-    if not "No structures? Try adding some!" in props.struct_items:
+    prefs = get_preferences()
+    if not "No structures? Try adding some!" in prefs.struct_items:
         # delete structure file
         get_active_path().unlink()
-        props.struct_items.remove(value)
+        prefs.struct_items.remove(value)
         # set enum to index 0
-        props = bpy.context.scene.blendir_props
-        props.property_unset("structure")
+        prefs.property_unset("structure")
         structs_add_empty()
     else:
         raise BlenDirError("No structures to remove")
@@ -344,47 +341,21 @@ def import_struct(path, struct_name):
 
 
 def structs_add_empty():
-    props = bpy.context.scene.blendir_props
-    if len(props.struct_items) == 0:
-        props.struct_items.append("No structures? Try adding some!")
-        props.struct_icon = "ERROR"
-
-
-def load_startup():
-    try:
-        path = pathlib.Path(__file__).resolve().parent / "startup.json"
-        with open(path, "r") as f:
-            data = json.load(f)
-            return data
-    except FileNotFoundError:
-        # default settings
-        data = {"structure": 0}
-        write_json(data)
-        return data
-
-
-def save_default():
-    # save int value of structure instead of string id
-    # default value must be int for this property
-    data = {"structure": bpy.context.scene.blendir_props.get("structure")}
-    write_json(data)
-
-
-def write_json(data):
-    path = pathlib.Path(__file__).resolve().parent / "startup.json"
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
+    prefs = get_preferences()
+    if len(prefs.struct_items) == 0:
+        prefs.struct_items.append("No structures? Try adding some!")
+        prefs.struct_icon = "ERROR"
 
 
 def add_bookmark(bookmark):
-    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    path = get_dir_path() / "bookmarks.txt"
     with path.open("a") as f:
         f.write(bookmark + "\n")
 
 
 def get_bookmarks():
     bookmarks = []
-    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    path = get_dir_path() / "bookmarks.txt"
     if path.is_file():
         with path.open("r") as f:
             for line in f:
@@ -393,7 +364,7 @@ def get_bookmarks():
 
 
 def open_bookmarks():
-    path = pathlib.Path(__file__).resolve().parent / "bookmarks.txt"
+    path = get_dir_path() / "bookmarks.txt"
     if path.is_file():
         open_file(path)
     else:
@@ -495,8 +466,12 @@ def get_datetime(get_time=False):
     return dt
 
 
+def get_file_path():
+    return pathlib.Path(__file__)
+
+
 def get_dir_path():
-    return pathlib.Path(__file__).resolve().parent
+    return get_file_path().parent
 
 
 def get_struct_path():
@@ -506,14 +481,11 @@ def get_struct_path():
 def get_active_path(input_struct=None):
     if input_struct is not None:
         return get_struct_path() / f"blendir_{input_struct}.txt"
-    props = bpy.context.scene.blendir_props
-    return get_struct_path() / f"blendir_{props.structure}.txt"
+    return get_struct_path() / f"blendir_{get_preferences().structure}.txt"
 
 
 def get_preferences():
-    return bpy.context.preferences.addons[
-        pathlib.Path(__file__).resolve().parent.stem
-    ].preferences
+    return bpy.context.preferences.addons[get_dir_path().stem].preferences
 
 
 # custom exception
