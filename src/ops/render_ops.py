@@ -17,6 +17,10 @@ class BLENDIR_OT_render_image(Operator):
 
     def execute(self, context):
         render_path = context.scene.blendir_props.render_path
+        if render_path == "":
+            default_render_path = bpy.context.scene.render.filepath
+            context.scene.blendir_props.render_path = default_render_path
+            render_path = default_render_path
         context.scene.render.filepath = render_path + get_datetime(get_time=True)
         bpy.ops.render.render("INVOKE_DEFAULT", write_still=True, use_viewport=True)
         return {"FINISHED"}

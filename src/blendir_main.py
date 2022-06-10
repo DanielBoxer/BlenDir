@@ -204,7 +204,13 @@ def archive(old_path):
 
 def make_render_folders():
     prefs = get_preferences()
-    render_path = pathlib.Path(bpy.context.scene.blendir_props.render_path)
+    render_path = bpy.context.scene.blendir_props.render_path
+    if render_path == "":
+        default_render_path = bpy.context.scene.render.filepath
+        bpy.context.scene.blendir_props.render_path = default_render_path
+        render_path = default_render_path
+    # the default output path is relative so it must be made absolute
+    render_path = pathlib.Path(render_path).resolve()
     if prefs.make_frames_folder:
         render_path /= "Frames"
         render_path.mkdir(exist_ok=True)
