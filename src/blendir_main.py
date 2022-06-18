@@ -17,10 +17,7 @@ def read_structure(structure_path):
 
     props = bpy.context.scene.blendir_props
     curr_blend_path = pathlib.Path(bpy.data.filepath)
-    # clear bookmarks
-    bookmarks = bpy.context.scene.blendir_bookmarks
-    for bookmark in bookmarks.__annotations__.keys():
-        bookmarks[bookmark] = None
+    bpy.context.scene.blendir_bookmarks.clear()
 
     old_path = props.old_path
     if old_path == "":
@@ -125,11 +122,8 @@ def read_structure(structure_path):
                 )
 
             if store_bookmark:
-                bookmarks = bpy.context.scene.blendir_bookmarks
-                for bookmark in bookmarks.__annotations__.keys():
-                    if bookmarks[bookmark] is None:
-                        bookmarks[bookmark] = str(new_path)
-                        break
+                new_bookmark = bpy.context.scene.blendir_bookmarks.add()
+                new_bookmark.path = str(new_path)
             if store_ref_path:
                 props.reference_path = str(new_path)
             if set_render_path:

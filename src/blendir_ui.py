@@ -29,9 +29,9 @@ def draw_prefs(self, context, keymaps):
     row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
     row = box.row()
-    keymap_item = keymaps[1][1]
-    row.prop(keymap_item, "active", text="", full_event=True)
-    row.prop(keymap_item, "type", text=keymap_item.name, full_event=True)
+    id = "blendir.open_bookmarks_pie"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
     row = box.row()
     keymap_item = keymaps[2][1]
@@ -117,41 +117,63 @@ class BLENDIR_PT_main(Panel):
         row.alignment = "CENTER"
         row.operator("blendir.render_image", text="", icon="RENDER_STILL")
         row.operator("blendir.render_animation", text="", icon="RENDER_ANIMATION")
-        row.operator(
-            "blendir.directory_browser", text="", icon="BOOKMARKS"
-        ).mode = "BOOKMARK"
+        row.operator("blendir.bookmarks", text="", icon="BOOKMARKS")
 
 
-class BLENDIR_MT_bookmarks(Menu):
+class BLENDIR_MT_bookmarks_pie(Menu):
     bl_label = "Bookmarks"
 
     def draw(self, context):
+        page = context.scene.blendir_props.bookmark_page
         pie = self.layout.menu_pie()
-        # add all saved bookmarks to the pie
-        saved_bookmarks = get_bookmarks()
-        if saved_bookmarks:
-            for bookmark_idx, bookmark in enumerate(saved_bookmarks):
-                if bookmark != "":
-                    pie.operator(
-                        "blendir.bookmark",
-                        text=pathlib.Path(bookmark).stem,
-                        icon="SOLO_ON",
-                    ).bookmark = str(bookmark_idx)
-
+        bookmark_list = {}
         # add all project bookmarks
         if bpy.data.is_saved:
-            bookmark_idx = len(saved_bookmarks)
             bookmarks = context.scene.blendir_bookmarks
-            for bookmark in bookmarks.__annotations__.keys():
-                if bookmarks[bookmark] is not None and bookmark_idx < 8:
-                    pie.operator(
-                        "blendir.bookmark",
-                        text=pathlib.Path(bookmarks[bookmark]).stem,
-                        icon="SOLO_OFF",
-                    ).bookmark = str(bookmark_idx)
-                    bookmark_idx += 1
-                else:
-                    break
+            for bookmark in bookmarks:
+                bookmark_list[bookmark.path] = "SOLO_OFF"
+        # add all saved bookmarks
+        for bookmark in get_bookmarks():
+            if bookmark != "":
+                bookmark_list[bookmark] = "SOLO_ON"
+
+        bookmark_count = len(bookmark_list)
+        low_idx = page * 8 - page
+        high_idx = low_idx + 8
+        iter_bookmarks = enumerate(list(bookmark_list.keys())[low_idx:], low_idx)
+        for bookmark_idx, bookmark in iter_bookmarks:
+            if bookmark_idx == high_idx:
+                # pie menu can only have 8 items
+                break
+            if bookmark_idx == low_idx and bookmark_count > 8:
+                box = pie.box()
+                row = box.row()
+                row.alignment = "CENTER"
+                row.label(text=f"Page {page + 1}", icon="BOOKMARKS")
+                if bookmark_count - high_idx >= 0:
+                    next_op = box.operator(
+                        "blendir.change_page",
+                        text="Next",
+                        icon="TRIA_RIGHT",
+                    )
+                    next_op.mode = "NEXT"
+
+                if page > 0:
+                    previous_op = box.operator(
+                        "blendir.change_page",
+                        text="Previous",
+                        icon="TRIA_LEFT",
+                    )
+                    previous_op.mode = "PREVIOUS"
+
+                # subtract 1 because two items will be drawn on this iteration
+                high_idx -= 1
+
+            pie.operator(
+                "blendir.open_bookmark",
+                text=pathlib.Path(bookmark).stem,
+                icon=bookmark_list[bookmark],
+            ).bookmark_idx = bookmark_idx
 
 
 class BLENDIR_MT_references(Menu):
@@ -165,6 +187,6 @@ class BLENDIR_MT_references(Menu):
                     "blendir.reference",
                     text=ref,
                     icon="FUND",
-                ).reference = str(ref_idx)
+                ).reference_idx = ref_idx
             else:
                 break

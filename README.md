@@ -1,4 +1,4 @@
-# BlenDir v0.18.2 <!-- omit in toc -->
+# BlenDir v0.18.3 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -40,8 +40,9 @@
 ### Bookmarks
 
 - Add local and global folder bookmarks. Selecting a bookmark will open it in the default OS file browser
+- Adding more than 8 bookmarks to the pie menu is supported
 
-![Bookmarks](docs/bookmarks.PNG)
+![Bookmarks](https://user-images.githubusercontent.com/65575771/174414327-7622772c-6942-4c37-93b4-48475a542626.gif)
 
 ### References Menu
 

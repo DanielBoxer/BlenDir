@@ -2,13 +2,10 @@
 # See __init__.py and LICENSE for more information
 
 import bpy
+from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
-from ..blendir_main import (
-    read_structure,
-    archive,
-    BlenDirError,
-)
+from ..blendir_main import read_structure, archive, BlenDirError
 from ..utils import (
     get_active_path,
     valid_path,
@@ -18,7 +15,7 @@ from ..utils import (
     open_file,
 )
 from ..structure import import_struct
-from ..bookmark import add_bookmark
+from ..bookmark import add_bookmark, get_bookmarks
 
 
 class BLENDIR_OT_start(Operator):
@@ -85,17 +82,16 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
     bl_description = "Open the directory browser"
 
     # starting location
-    directory: bpy.props.StringProperty()
+    directory: StringProperty()
     # only show folders
-    filter_folder: bpy.props.BoolProperty(default=True)
-
-    mode: bpy.props.EnumProperty(
+    filter_folder: BoolProperty(default=True)
+    mode: EnumProperty(
         items=[
             ("STRUCTURE", "0", ""),
             ("BOOKMARK", "1", ""),
         ],
     )
-    struct_name: bpy.props.StringProperty()
+    struct_name: StringProperty()
 
     def execute(self, context):
         path = self.filepath
@@ -107,7 +103,12 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
                 return {"CANCELLED"}
             self.report({"INFO"}, f"Structure '{self.struct_name}' created")
         else:
-            add_bookmark(path)
+            if path not in get_bookmarks():
+                add_bookmark(path)
+                self.report({"INFO"}, "Folder added to bookmarks")
+            else:
+                self.report({"ERROR"}, "Folder is already bookmarked")
+                return {"CANCELLED"}
 
         return {"FINISHED"}
 
@@ -139,16 +140,13 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
         else:
             box.label(text="Choose a directory to bookmark", icon="BOOKMARKS")
             box.label(text="Press 'Start' to add to bookmarks")
-            box.separator()
-            box = box.box()
-            box.operator("blendir.edit_bookmarks", icon="BOOKMARKS")
 
 
 class BLENDIR_OT_save_blend(Operator, ImportHelper):
     bl_idname = "blendir.save_blend"
     bl_label = "Start BlenDir"
 
-    directory: bpy.props.StringProperty()
+    directory: StringProperty()
 
     def execute(self, context):
         if get_preferences().structure == "No structures? Try adding some!":
@@ -207,20 +205,9 @@ class BLENDIR_OT_reference(Operator):
     bl_label = "Reference"
     bl_description = "Reference"
 
-    reference: bpy.props.EnumProperty(
-        items=(
-            ("0", "0", ""),
-            ("1", "1", ""),
-            ("2", "2", ""),
-            ("3", "3", ""),
-            ("4", "4", ""),
-            ("5", "5", ""),
-            ("6", "6", ""),
-            ("7", "7", ""),
-        )
-    )
+    reference_idx: IntProperty()
 
     def execute(self, context):
         refs = get_references()
-        open_file(refs[1] / refs[0][int(self.reference)])
+        open_file(refs[1] / refs[0][self.reference])
         return {"FINISHED"}

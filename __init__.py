@@ -18,8 +18,10 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 18, 2),
-    "location": "View3D > Sidebar > BlenDir",
+    "version": (0, 18, 3),
+    "location": (
+        "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
+    ),
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
     "tracker_url": "https://github.com/DanielBoxer/BlenDir/issues",
@@ -31,6 +33,7 @@ from bpy.props import (
     StringProperty,
     EnumProperty,
     BoolProperty,
+    IntProperty,
 )
 import pathlib
 from .src.ops.blendir_ops import (
@@ -46,8 +49,11 @@ from .src.ops.structure_ops import (
     BLENDIR_OT_import_structure,
 )
 from .src.ops.bookmark_ops import (
-    BLENDIR_OT_bookmark,
+    BLENDIR_OT_bookmarks,
+    BLENDIR_OT_open_bookmark,
     BLENDIR_OT_edit_bookmarks,
+    BLENDIR_OT_change_page,
+    BLENDIR_OT_open_bookmarks_pie,
 )
 from .src.ops.render_ops import (
     BLENDIR_OT_render_animation,
@@ -55,14 +61,12 @@ from .src.ops.render_ops import (
 )
 from .src.blendir_ui import (
     BLENDIR_PT_main,
-    BLENDIR_MT_bookmarks,
+    BLENDIR_MT_bookmarks_pie,
     BLENDIR_MT_references,
     draw_prefs,
 )
-from .src.structure import (
-    init_structs,
-    update_structs,
-)
+from .src.structure import init_structs, update_structs
+from .src.bookmark import BLENDIR_PG_bookmark
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
@@ -70,17 +74,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
     old_path: StringProperty()
     reference_path: StringProperty()
     render_path: StringProperty()
-
-
-class BLENDIR_PG_bookmarks(bpy.types.PropertyGroup):
-    b0: StringProperty()
-    b1: StringProperty()
-    b2: StringProperty()
-    b3: StringProperty()
-    b4: StringProperty()
-    b5: StringProperty()
-    b6: StringProperty()
-    b7: StringProperty()
+    bookmark_page: IntProperty()
 
 
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
@@ -170,16 +164,19 @@ classes = (
     BLENDIR_OT_import_structure,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_bookmark,
+    BLENDIR_OT_bookmarks,
+    BLENDIR_OT_open_bookmark,
     BLENDIR_OT_edit_bookmarks,
+    BLENDIR_OT_change_page,
+    BLENDIR_OT_open_bookmarks_pie,
     BLENDIR_OT_reference,
     BLENDIR_OT_render_animation,
     BLENDIR_OT_render_image,
     BLENDIR_PT_main,
-    BLENDIR_MT_bookmarks,
+    BLENDIR_MT_bookmarks_pie,
     BLENDIR_MT_references,
     BLENDIR_PG_properties,
-    BLENDIR_PG_bookmarks,
+    BLENDIR_PG_bookmark,
     BLENDIR_AP_preferences,
 )
 
@@ -190,8 +187,8 @@ def register():
     bpy.types.Scene.blendir_props = bpy.props.PointerProperty(
         type=BLENDIR_PG_properties
     )
-    bpy.types.Scene.blendir_bookmarks = bpy.props.PointerProperty(
-        type=BLENDIR_PG_bookmarks
+    bpy.types.Scene.blendir_bookmarks = bpy.props.CollectionProperty(
+        type=BLENDIR_PG_bookmark
     )
 
     # add keymaps
@@ -204,11 +201,12 @@ def register():
         )
         keymaps.append((keymap, keymap_item))
 
-        id = "wm.call_menu_pie"
-        keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", shift=True)
-        keymap_item.properties.name = "BLENDIR_MT_bookmarks"
+        keymap_item = keymap.keymap_items.new(
+            "blendir.open_bookmarks_pie", type="F", value="PRESS", shift=True
+        )
         keymaps.append((keymap, keymap_item))
 
+        id = "wm.call_menu_pie"
         keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
         keymap_item.properties.name = "BLENDIR_MT_references"
         keymaps.append((keymap, keymap_item))

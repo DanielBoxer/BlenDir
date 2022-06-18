@@ -1,6 +1,7 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
+import bpy
 from .blendir_main import BlenDirError
 from .utils import get_dir_path, open_file
 
@@ -27,3 +28,7 @@ def open_bookmarks():
         open_file(path)
     else:
         raise BlenDirError("No bookmarks to edit, try adding some with the browser")
+
+
+class BLENDIR_PG_bookmark(bpy.types.PropertyGroup):
+    path: bpy.props.StringProperty()
