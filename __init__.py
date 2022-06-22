@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 18, 3),
+    "version": (0, 19, 0),
     "location": (
         "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
     ),
@@ -40,7 +40,7 @@ from .src.ops.blendir_ops import (
     BLENDIR_OT_start,
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
-    BLENDIR_OT_reference,
+    BLENDIR_OT_open_reference,
 )
 from .src.ops.structure_ops import (
     BLENDIR_OT_new_structure,
@@ -59,10 +59,15 @@ from .src.ops.render_ops import (
     BLENDIR_OT_render_animation,
     BLENDIR_OT_render_image,
 )
+from .src.ops.recent_ops import (
+    BLENDIR_OT_open_recent,
+    BLENDIR_OT_edit_recent,
+)
 from .src.blendir_ui import (
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks_pie,
-    BLENDIR_MT_references,
+    BLENDIR_MT_references_pie,
+    BLENDIR_MT_recent_pie,
     draw_prefs,
 )
 from .src.structure import init_structs, update_structs
@@ -126,12 +131,14 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
     )
     # misc properties
     show_del_warning: BoolProperty(
-        name="Confirm File Deletion",
-        description="Show an extra warning before deleting files",
+        name="Delete Structure",
+        description=(
+            "To delete a structure, the user first has to type 'delete' in the popup"
+        ),
         default=True,
     )
     show_create_warning: BoolProperty(
-        name="Confirm Folder Creation",
+        name="Create Folders",
         description="Show a warning before creating folders after the first time",
         default=True,
     )
@@ -147,6 +154,15 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
         name="Make Animation Folders",
         description=(
             "Make a new folder for each animation render and save the frames there"
+        ),
+        default=True,
+    )
+    # misc properties
+    autoload_refs: BoolProperty(
+        name="Autoload References",
+        description=(
+            "When opening a project from the 'Recent' menu, "
+            "open all references in the reference folder"
         ),
         default=True,
     )
@@ -169,12 +185,15 @@ classes = (
     BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_change_page,
     BLENDIR_OT_open_bookmarks_pie,
-    BLENDIR_OT_reference,
+    BLENDIR_OT_open_reference,
+    BLENDIR_OT_open_recent,
+    BLENDIR_OT_edit_recent,
     BLENDIR_OT_render_animation,
     BLENDIR_OT_render_image,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks_pie,
-    BLENDIR_MT_references,
+    BLENDIR_MT_references_pie,
+    BLENDIR_MT_recent_pie,
     BLENDIR_PG_properties,
     BLENDIR_PG_bookmark,
     BLENDIR_AP_preferences,
@@ -208,7 +227,13 @@ def register():
 
         id = "wm.call_menu_pie"
         keymap_item = keymap.keymap_items.new(id, type="F", value="PRESS", ctrl=True)
-        keymap_item.properties.name = "BLENDIR_MT_references"
+        keymap_item.properties.name = "BLENDIR_MT_references_pie"
+        keymaps.append((keymap, keymap_item))
+
+        keymap_item = keymap.keymap_items.new(
+            id, type="R", value="PRESS", shift=True, ctrl=True
+        )
+        keymap_item.properties.name = "BLENDIR_MT_recent_pie"
         keymaps.append((keymap, keymap_item))
 
         keymap_item = keymap.keymap_items.new(

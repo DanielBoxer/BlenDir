@@ -16,6 +16,21 @@ from ..utils import (
 )
 from ..structure import import_struct
 from ..bookmark import add_bookmark, get_bookmarks
+from ..recent import add_recent
+
+
+def create_folders(self):
+    try:
+        read_structure(get_active_path())
+    except BlenDirError as e:
+        archive(bpy.context.scene.blendir_props.old_path)
+        self.report({"ERROR"}, str(e))
+        return {"CANCELLED"}
+    add_recent(bpy.data.filepath)
+    # save to store any changed properties like project bookmarks or reference path
+    bpy.ops.wm.save_mainfile()
+    self.report({"INFO"}, "Folder structure created")
+    return {"FINISHED"}
 
 
 class BLENDIR_OT_start(Operator):
@@ -24,18 +39,16 @@ class BLENDIR_OT_start(Operator):
     bl_description = "Create folder structure"
 
     def execute(self, context):
-        props = context.scene.blendir_props
-
         if not bpy.data.is_saved:
             self.report({"INFO"}, "Choose a save location")
             bpy.ops.blendir.save_blend("INVOKE_DEFAULT")
             return {"CANCELLED"}
-
         if get_preferences().structure == "No structures? Try adding some!":
             self.report({"ERROR"}, "Add a structure before starting BlenDir")
             return {"CANCELLED"}
 
         # if folder structure has been created before, archive it
+        props = context.scene.blendir_props
         if props.old_path != "":
             try:
                 archive(props.old_path)
@@ -43,15 +56,7 @@ class BLENDIR_OT_start(Operator):
                 self.report({"ERROR"}, str(e))
                 return {"CANCELLED"}
 
-        try:
-            read_structure(get_active_path())
-        except BlenDirError as e:
-            self.report({"ERROR"}, str(e))
-            archive(props.old_path)
-            return {"CANCELLED"}
-
-        self.report({"INFO"}, "Folder structure created")
-        return {"FINISHED"}
+        return create_folders(self)
 
     def invoke(self, context, event):
         props = context.scene.blendir_props
@@ -73,7 +78,57 @@ class BLENDIR_OT_start(Operator):
         col = box.column().box().column()
         col.label(text="Press OK to recreate folder structure.")
         col.label(text="Previous folders will be moved to 'BlenDir_Archive'.")
-        col.label(text="The blender file will be moved to the correct location.")
+        col.label(text="The Blender file will be moved to the correct location.")
+
+
+class BLENDIR_OT_save_blend(Operator, ImportHelper):
+    bl_idname = "blendir.save_blend"
+    bl_label = "Start BlenDir"
+
+    directory: StringProperty()
+
+    def execute(self, context):
+        if get_preferences().structure == "No structures? Try adding some!":
+            self.report({"ERROR"}, "Add a structure before starting BlenDir")
+            return {"CANCELLED"}
+        if self.filepath == self.directory:
+            self.report({"ERROR"}, "File name can't be empty")
+            return {"CANCELLED"}
+        new_filepath = valid_filename(self.filepath)
+        if len(new_filepath) == 1:
+            self.report({"ERROR"}, f"Invalid file name. Remove '{new_filepath}'")
+            return {"CANCELLED"}
+        # save in chosen location
+        bpy.ops.wm.save_as_mainfile(filepath=new_filepath)
+        # update the previous save location
+        get_preferences().last_path = self.directory
+        return create_folders(self)
+
+    def invoke(self, context, event):
+        # start in previous saved blender file location
+        last_path = get_preferences().last_path
+        if last_path != "":
+            # check if the path exists
+            last_path = valid_path(last_path)
+        self.directory = last_path
+        context.window_manager.fileselect_add(self)
+        return {"RUNNING_MODAL"}
+
+    def draw(self, context):
+        box = self.layout.box()
+        box.label(text="BlenDir Save Browser", icon="FILEBROWSER")
+        box.separator(factor=0)
+        box = box.box()
+        box.label(text="1. Choose a save location!", icon="FILE_TICK")
+        box.label(text="2. Enter the name of the blend file", icon="SORTALPHA")
+        col = box.column()
+        col.label(text="Invalid name characters: [  " + '\/:*?"<>|.' + "  ]")
+        col.label(text="Adding '.blend' is not necessary.")
+        col.separator()
+        col = col.box().column()
+        col.label(text="The 'Start BlenDir' button will:")
+        col.label(text="1. Save the Blender file")
+        col.label(text="2. Create folders in chosen location")
 
 
 class BLENDIR_OT_directory_browser(Operator, ImportHelper):
@@ -142,72 +197,14 @@ class BLENDIR_OT_directory_browser(Operator, ImportHelper):
             box.label(text="Press 'Start' to add to bookmarks")
 
 
-class BLENDIR_OT_save_blend(Operator, ImportHelper):
-    bl_idname = "blendir.save_blend"
-    bl_label = "Start BlenDir"
-
-    directory: StringProperty()
-
-    def execute(self, context):
-        if get_preferences().structure == "No structures? Try adding some!":
-            self.report({"ERROR"}, "Add a structure before starting BlenDir")
-            return {"CANCELLED"}
-        if self.filepath == self.directory:
-            self.report({"ERROR"}, "File name can't be empty")
-            return {"CANCELLED"}
-        new_filepath = valid_filename(self.filepath)
-        if len(new_filepath) == 1:
-            self.report({"ERROR"}, f"Invalid file name. Remove '{new_filepath}'")
-            return {"CANCELLED"}
-        # save in chosen location
-        bpy.ops.wm.save_as_mainfile(filepath=new_filepath)
-        # update the previous save location
-        get_preferences().last_path = self.directory
-        # code from start operator to handle exceptions
-        try:
-            read_structure(get_active_path())
-        except BlenDirError as e:
-            self.report({"ERROR"}, str(e))
-            archive(context.scene.blendir_props.old_path)
-            return {"CANCELLED"}
-        self.report({"INFO"}, f"Folder structure created")
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        # start in previous saved blender file location
-        last_path = get_preferences().last_path
-        if last_path != "":
-            # check if the path exists
-            last_path = valid_path(last_path)
-        self.directory = last_path
-        context.window_manager.fileselect_add(self)
-        return {"RUNNING_MODAL"}
-
-    def draw(self, context):
-        box = self.layout.box()
-        box.label(text="BlenDir Save Browser", icon="FILEBROWSER")
-        box.separator(factor=0)
-        box = box.box()
-        box.label(text="1. Choose a save location!", icon="FILE_TICK")
-        box.label(text="2. Enter the name of the blend file", icon="SORTALPHA")
-        col = box.column()
-        col.label(text="Invalid name characters: [  " + '\/:*?"<>|.' + "  ]")
-        col.label(text="Adding '.blend' is not necessary.")
-        col.separator()
-        col = col.box().column()
-        col.label(text="The 'Start BlenDir' button will:")
-        col.label(text="1. Save the Blender file")
-        col.label(text="2. Create folders in chosen location")
-
-
-class BLENDIR_OT_reference(Operator):
-    bl_idname = "blendir.reference"
+class BLENDIR_OT_open_reference(Operator):
+    bl_idname = "blendir.open_reference"
     bl_label = "Reference"
-    bl_description = "Reference"
+    bl_description = "Open reference file"
 
     reference_idx: IntProperty()
 
     def execute(self, context):
         refs = get_references()
-        open_file(refs[1] / refs[0][self.reference])
+        open_file(refs[1] / refs[0][self.reference_idx])
         return {"FINISHED"}

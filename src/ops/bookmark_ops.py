@@ -53,7 +53,7 @@ class BLENDIR_OT_bookmarks(Operator):
 class BLENDIR_OT_open_bookmark(Operator):
     bl_idname = "blendir.open_bookmark"
     bl_label = "Bookmark"
-    bl_description = "Bookmark"
+    bl_description = "Open bookmarked folder"
 
     bookmark_idx: IntProperty()
 
@@ -83,7 +83,7 @@ class BLENDIR_OT_edit_bookmarks(Operator):
 class BLENDIR_OT_change_page(Operator):
     bl_idname = "blendir.change_page"
     bl_label = "Page"
-    bl_description = "Change Page"
+    bl_description = "Change page"
 
     mode: EnumProperty(
         items=[
@@ -109,7 +109,7 @@ class BLENDIR_OT_change_page(Operator):
 
 class BLENDIR_OT_open_bookmarks_pie(Operator):
     bl_idname = "blendir.open_bookmarks_pie"
-    bl_label = "Open Bookmarks Pie"
+    bl_label = "Bookmarks"
 
     def execute(self, context):
         bpy.ops.wm.call_menu_pie("INVOKE_DEFAULT", name="BLENDIR_MT_bookmarks_pie")

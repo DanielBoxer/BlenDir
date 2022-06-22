@@ -6,49 +6,12 @@ from bpy.types import Panel, Menu
 import pathlib
 from .utils import get_preferences, get_references
 from .bookmark import get_bookmarks
+from .recent import get_recent
 
 
 def draw_prefs(self, context, keymaps):
     layout = self.layout
-    box = layout.box()
-    row = box.row()
-    row.alignment = "CENTER"
-    row.label(text="Keymap", icon="EVENT_OS")
-    box.separator()
 
-    user_keymaps = context.window_manager.keyconfigs.user.keymaps["3D View"]
-    keymap_items = user_keymaps.keymap_items
-    # update the stored keymap
-    layout.context_pointer_set("keymap", user_keymaps)
-
-    row = box.row()
-    id = "blendir.start"
-    # keymap activation checkbox
-    row.prop(keymap_items[id], "active", text="", full_event=True)
-    # keymap input button
-    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-    row = box.row()
-    id = "blendir.open_bookmarks_pie"
-    row.prop(keymap_items[id], "active", text="", full_event=True)
-    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-    row = box.row()
-    keymap_item = keymaps[2][1]
-    row.prop(keymap_item, "active", text="", full_event=True)
-    row.prop(keymap_item, "type", text=keymap_item.name, full_event=True)
-
-    row = box.row()
-    id = "blendir.render_image"
-    row.prop(keymap_items[id], "active", text="", full_event=True)
-    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-    row = box.row()
-    id = "blendir.render_animation"
-    row.prop(keymap_items[id], "active", text="", full_event=True)
-    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
-
-    box.separator(factor=0)
     row = layout.row()
 
     col = row.box().column()
@@ -58,7 +21,6 @@ def draw_prefs(self, context, keymaps):
     col.prop(self, "z_input", icon="EVENT_Z")
 
     col = row.box().column()
-
     col.label(text="Date and Time", icon="TIME")
     row = col.row()
     row.alignment = "LEFT"
@@ -74,7 +36,6 @@ def draw_prefs(self, context, keymaps):
     row.label(text="Separator     ")
     row.prop(self, "date_separator")
 
-    box.separator(factor=0)
     row = layout.row()
 
     col = row.box().column()
@@ -86,6 +47,49 @@ def draw_prefs(self, context, keymaps):
     col.label(text="Confirmation", icon="CHECKMARK")
     col.prop(self, "show_create_warning")
     col.prop(self, "show_del_warning")
+
+    col = row.box().column()
+    col.label(text="Recent Projects", icon="FILE_BLEND")
+    col.prop(self, "autoload_refs")
+    col.operator("blendir.edit_recent")
+
+    box = layout.box()
+
+    row = box.row()
+    row.alignment = "CENTER"
+    row.label(text="Keymap", icon="EVENT_OS")
+
+    user_keymaps = context.window_manager.keyconfigs.user.keymaps["3D View"]
+    keymap_items = user_keymaps.keymap_items
+    # update the stored keymap
+    layout.context_pointer_set("keymap", user_keymaps)
+
+    row = box.row()
+    id = "blendir.start"
+    # keymap activation checkbox
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    # keymap input button
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+    row = box.row()
+    id = "blendir.open_bookmarks_pie"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+    row = box.row()
+    keymap_item = keymaps[2][1]
+    row.prop(keymap_item, "active", text="", full_event=True)
+    row.prop(keymap_item, "type", text=keymap_item.name, full_event=True)
+    row = box.row()
+    keymap_item = keymaps[3][1]
+    row.prop(keymap_item, "active", text="", full_event=True)
+    row.prop(keymap_item, "type", text=keymap_item.name, full_event=True)
+    row = box.row()
+    id = "blendir.render_image"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
+    row = box.row()
+    id = "blendir.render_animation"
+    row.prop(keymap_items[id], "active", text="", full_event=True)
+    row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
 
 class BLENDIR_PT_main(Panel):
@@ -176,7 +180,7 @@ class BLENDIR_MT_bookmarks_pie(Menu):
             ).bookmark_idx = bookmark_idx
 
 
-class BLENDIR_MT_references(Menu):
+class BLENDIR_MT_references_pie(Menu):
     bl_label = "References"
 
     def draw(self, context):
@@ -184,9 +188,22 @@ class BLENDIR_MT_references(Menu):
         for ref_idx, ref in enumerate(get_references()[0]):
             if ref_idx < 8:
                 pie.operator(
-                    "blendir.reference",
+                    "blendir.open_reference",
                     text=ref,
-                    icon="FUND",
+                    icon="IMAGE_REFERENCE",
                 ).reference_idx = ref_idx
             else:
                 break
+
+
+class BLENDIR_MT_recent_pie(Menu):
+    bl_label = "Recent"
+
+    def draw(self, context):
+        pie = self.layout.menu_pie()
+        for path_idx, path in enumerate(get_recent()):
+            pie.operator(
+                "blendir.open_recent",
+                text=pathlib.Path(path).stem,
+                icon="BLENDER",
+            ).recent_idx = path_idx

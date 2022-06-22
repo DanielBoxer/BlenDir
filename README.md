@@ -1,4 +1,4 @@
-# BlenDir v0.18.3 <!-- omit in toc -->
+# BlenDir v0.19.0 <!-- omit in toc -->
 
 **BlenDir** is a Blender add-on for automatic folder structure creation and management!
 
@@ -12,15 +12,14 @@
   - [Bookmarks](#bookmarks)
   - [References Menu](#references-menu)
   - [Auto Save Image Renders](#auto-save-image-renders)
-  - [Animation Frames Folders](#animation-frames-folders)
+  - [Animation Frames Folder](#animation-frames-folder)
+  - [Recent Projects Menu](#recent-projects-menu)
   - [Keywords](#keywords)
   - [Keymap](#keymap)
 - [Setup Instructions](#setup-instructions)
 - [General Instructions](#general-instructions)
   - [Automatically Generate Folder Structure Files](#automatically-generate-folder-structure-files)
 - [Installation](#installation)
-  - [Method 1 (recommended)](#method-1-recommended)
-  - [Method 2](#method-2)
 - [Notes](#notes)
 
 ## Features
@@ -56,11 +55,18 @@
 
 ![Auto Save Image](https://user-images.githubusercontent.com/65575771/172444114-f999af6f-bfbc-4aad-9d0d-56bb9e1d1737.gif)
 
-### Animation Frames Folders
+### Animation Frames Folder
 
 - When an animation is rendered, a subfolder will be automatically created in the render folder for the frames of the animation
 
 ![Animation Folders](https://user-images.githubusercontent.com/65575771/172444538-713edd96-4969-4d76-bd6e-bf8c1cd42407.gif)
+
+### Recent Projects Menu
+
+- Use the recent projects menu to open previous projects made with BlenDir
+- All your project references will be automatically opened
+
+![Recent Projects](docs/recent.PNG)
 
 ### Keywords
 
@@ -77,8 +83,7 @@
 ### Keymap
 
 - Use shortcuts to make creating folders even quicker
-
-![Keymap](docs/keymap.PNG)
+- Customizable hotkeys for all important operators and menus
 
 ## Setup Instructions
 
@@ -105,8 +110,6 @@
 
 ## Installation
 
-### Method 1 (recommended)
-
 - Download the `ZIP` file (don't extract it)
   - Either go to [Releases](https://github.com/DanielBoxer/BlenDir/releases/latest) and download the `ZIP` file for the latest stable version
   - Or press the `Code` button at the top of the page and then `Download ZIP` for the newest experimental version
@@ -117,13 +120,6 @@
 - Select the `ZIP` file in the file browser
 - Click `Install Add-on`
 - Enable the add-on by checking the box
-
-### Method 2
-
-- Download BlenDir
-- Extract the `ZIP` file
-- Move the folder inside the extracted folder into your Blender `addons` directory
-- Enable BlenDir
 
 ## Notes
 
