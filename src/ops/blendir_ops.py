@@ -13,6 +13,7 @@ from ..utils import (
     get_preferences,
     get_references,
     open_file,
+    reset_props,
 )
 from ..structure import import_struct
 from ..bookmark import add_bookmark, get_bookmarks
@@ -60,6 +61,14 @@ class BLENDIR_OT_start(Operator):
 
     def invoke(self, context, event):
         props = context.scene.blendir_props
+
+        # if startup file is saved, all props including old_path will persist
+        # need to check for case where old_path is wrong
+        if props.old_path != "" and not bpy.data.is_saved:
+            reset_props(context)
+
+        # TODO detect other case where file is saved before creating folders
+
         if props.old_path != "" and get_preferences().show_create_warning:
             # if folder structure has been created before, show confirmation menu
             return context.window_manager.invoke_props_dialog(self)
@@ -207,4 +216,18 @@ class BLENDIR_OT_open_reference(Operator):
     def execute(self, context):
         refs = get_references()
         open_file(refs[1] / refs[0][self.reference_idx])
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_reset_props(Operator):
+    bl_idname = "blendir.reset_props"
+    bl_label = "Reset State"
+    bl_description = (
+        "Reset all internal properties."
+        " This is only for if you have saved a startup file after using the add-on."
+        " After pressing this, save the startup file again."
+    )
+
+    def execute(self, context):
+        reset_props(context)
         return {"FINISHED"}

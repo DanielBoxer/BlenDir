@@ -85,6 +85,14 @@ def get_references():
     return references, ref_path
 
 
+def reset_props(context=bpy.context):
+    props = context.scene.blendir_props
+    props.old_path = ""
+    props.reference_path = ""
+    props.render_path = ""
+    props.bookmark_page = 0
+
+
 def open_file(file):
     platform = sys.platform
     if platform == "win32":

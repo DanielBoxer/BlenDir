@@ -1,24 +1,24 @@
 # Copyright (C) 2022 Daniel Boxer
 #
-# BlenDir is free software; you can redistribute it and/or modify
+# BlenDir is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # BlenDir is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTIBILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with BlenDir. If not, see <http://www.gnu.org/licenses/>.
+# along with BlenDir. If not, see <https://www.gnu.org/licenses/>.
 
 bl_info = {
     "name": "BlenDir",
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 19, 0),
+    "version": (0, 19, 1),
     "location": (
         "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
     ),
@@ -41,6 +41,7 @@ from .src.ops.blendir_ops import (
     BLENDIR_OT_directory_browser,
     BLENDIR_OT_save_blend,
     BLENDIR_OT_open_reference,
+    BLENDIR_OT_reset_props,
 )
 from .src.ops.structure_ops import (
     BLENDIR_OT_new_structure,
@@ -186,6 +187,7 @@ classes = (
     BLENDIR_OT_change_page,
     BLENDIR_OT_open_bookmarks_pie,
     BLENDIR_OT_open_reference,
+    BLENDIR_OT_reset_props,
     BLENDIR_OT_open_recent,
     BLENDIR_OT_edit_recent,
     BLENDIR_OT_render_animation,

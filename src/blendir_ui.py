@@ -91,6 +91,9 @@ def draw_prefs(self, context, keymaps):
     row.prop(keymap_items[id], "active", text="", full_event=True)
     row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
+    box = layout.box()
+    box.operator("blendir.reset_props")
+
 
 class BLENDIR_PT_main(Panel):
     bl_label = "BlenDir"
