@@ -100,7 +100,12 @@ def draw_prefs(self, context, keymaps):
     row.label(text="Misc", icon="SETTINGS")
 
     box.prop(self, "verbose_ui")
-    box.operator("blendir.reset_props")
+
+    props = context.scene.blendir_props
+    # iterate over all props in property group
+    if any(getattr(props, key) for key in props.__annotations__.keys()):
+        # show reset op if there are any saved props
+        box.operator("blendir.reset_props")
 
 
 class BLENDIR_PT_main(Panel):

@@ -231,6 +231,7 @@ class BLENDIR_OT_reset_props(Operator):
 
     def execute(self, context):
         reset_props(context)
+        self.report({"INFO"}, "State reset. Make sure to re-save the startup file")
         return {"FINISHED"}
 
 
