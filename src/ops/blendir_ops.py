@@ -2,22 +2,23 @@
 # See __init__.py and LICENSE for more information
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
-from ..blendir_main import read_structure, archive, BlenDirError
+
+from ..blendir_main import BlenDirError, archive, read_structure
+from ..bookmark import add_bookmark, get_bookmarks
+from ..recent import add_recent
+from ..structure import import_struct
 from ..utils import (
     get_active_path,
-    valid_path,
-    valid_filename,
     get_preferences,
     get_references,
     open_file,
     reset_props,
+    valid_filename,
+    valid_path,
 )
-from ..structure import import_struct
-from ..bookmark import add_bookmark, get_bookmarks
-from ..recent import add_recent
 
 
 def create_folders(self):
@@ -230,4 +231,17 @@ class BLENDIR_OT_reset_props(Operator):
 
     def execute(self, context):
         reset_props(context)
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_open_preferences(bpy.types.Operator):
+    bl_idname = "blendir.open_preferences"
+    bl_label = "Preferences"
+    bl_description = "Open preferences"
+
+    def execute(self, context):
+        bpy.ops.screen.userpref_show()
+        context.preferences.active_section = "ADDONS"
+        bpy.data.window_managers["WinMan"].addon_search = "BlenDir"
+        bpy.ops.preferences.addon_show(module="BlenDir")
         return {"FINISHED"}

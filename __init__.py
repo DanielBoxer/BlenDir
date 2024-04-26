@@ -28,51 +28,43 @@ bl_info = {
 }
 
 
-import bpy
-from bpy.props import (
-    StringProperty,
-    EnumProperty,
-    BoolProperty,
-    IntProperty,
-)
 import pathlib
+
+import bpy
+from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
+
+from .src.blendir_ui import (
+    BLENDIR_MT_bookmarks_pie,
+    BLENDIR_MT_recent_pie,
+    BLENDIR_MT_references_pie,
+    BLENDIR_PT_main,
+    draw_prefs,
+)
+from .src.bookmark import BLENDIR_PG_bookmark
 from .src.ops.blendir_ops import (
-    BLENDIR_OT_start,
     BLENDIR_OT_directory_browser,
-    BLENDIR_OT_save_blend,
+    BLENDIR_OT_open_preferences,
     BLENDIR_OT_open_reference,
     BLENDIR_OT_reset_props,
-)
-from .src.ops.structure_ops import (
-    BLENDIR_OT_new_structure,
-    BLENDIR_OT_edit_structure,
-    BLENDIR_OT_delete_structure,
-    BLENDIR_OT_import_structure,
+    BLENDIR_OT_save_blend,
+    BLENDIR_OT_start,
 )
 from .src.ops.bookmark_ops import (
     BLENDIR_OT_bookmarks,
-    BLENDIR_OT_open_bookmark,
-    BLENDIR_OT_edit_bookmarks,
     BLENDIR_OT_change_page,
+    BLENDIR_OT_edit_bookmarks,
+    BLENDIR_OT_open_bookmark,
     BLENDIR_OT_open_bookmarks_pie,
 )
-from .src.ops.render_ops import (
-    BLENDIR_OT_render_animation,
-    BLENDIR_OT_render_image,
-)
-from .src.ops.recent_ops import (
-    BLENDIR_OT_open_recent,
-    BLENDIR_OT_edit_recent,
-)
-from .src.blendir_ui import (
-    BLENDIR_PT_main,
-    BLENDIR_MT_bookmarks_pie,
-    BLENDIR_MT_references_pie,
-    BLENDIR_MT_recent_pie,
-    draw_prefs,
+from .src.ops.recent_ops import BLENDIR_OT_edit_recent, BLENDIR_OT_open_recent
+from .src.ops.render_ops import BLENDIR_OT_render_animation, BLENDIR_OT_render_image
+from .src.ops.structure_ops import (
+    BLENDIR_OT_delete_structure,
+    BLENDIR_OT_edit_structure,
+    BLENDIR_OT_import_structure,
+    BLENDIR_OT_new_structure,
 )
 from .src.structure import init_structs, update_structs
-from .src.bookmark import BLENDIR_PG_bookmark
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
@@ -192,6 +184,7 @@ classes = (
     BLENDIR_OT_edit_recent,
     BLENDIR_OT_render_animation,
     BLENDIR_OT_render_image,
+    BLENDIR_OT_open_preferences,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks_pie,
     BLENDIR_MT_references_pie,

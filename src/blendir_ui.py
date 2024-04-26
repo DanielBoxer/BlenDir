@@ -1,12 +1,14 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
-import bpy
-from bpy.types import Panel, Menu
 import pathlib
-from .utils import get_preferences, get_references
+
+import bpy
+from bpy.types import Menu, Panel
+
 from .bookmark import get_bookmarks
 from .recent import get_recent
+from .utils import get_preferences, get_references
 
 
 def draw_prefs(self, context, keymaps):
@@ -125,6 +127,7 @@ class BLENDIR_PT_main(Panel):
         row.operator("blendir.render_image", text="", icon="RENDER_STILL")
         row.operator("blendir.render_animation", text="", icon="RENDER_ANIMATION")
         row.operator("blendir.bookmarks", text="", icon="BOOKMARKS")
+        row.operator("blendir.open_preferences", text="", icon="PREFERENCES")
 
 
 class BLENDIR_MT_bookmarks_pie(Menu):
