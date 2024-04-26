@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 19, 1),
+    "version": (0, 19, 2),
     "location": (
         "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
     ),
@@ -158,6 +158,11 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
             "open all references in the reference folder"
         ),
         default=True,
+    )
+    verbose_ui: BoolProperty(
+        name="Verbose UI",
+        description=("Show text beside buttons in the main panel"),
+        default=False,
     )
 
     def draw(self, context):

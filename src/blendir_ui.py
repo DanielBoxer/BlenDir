@@ -94,6 +94,12 @@ def draw_prefs(self, context, keymaps):
     row.prop(keymap_items[id], "type", text=keymap_items[id].name, full_event=True)
 
     box = layout.box()
+
+    row = box.row()
+    row.alignment = "CENTER"
+    row.label(text="Misc", icon="SETTINGS")
+
+    box.prop(self, "verbose_ui")
     box.operator("blendir.reset_props")
 
 
@@ -106,6 +112,7 @@ class BLENDIR_PT_main(Panel):
     def draw(self, context):
         layout = self.layout
         box = layout.box()
+        prefs = get_preferences()
 
         row = box.row()
         row.scale_y = 2
@@ -113,21 +120,37 @@ class BLENDIR_PT_main(Panel):
 
         row = box.row()
         row.scale_y = 2
-        row.prop(get_preferences(), "structure", icon="FILE")
+        row.prop(prefs, "structure", icon="FILE")
 
-        row = box.box().row()
-        row.alignment = "CENTER"
-        row.operator("blendir.new_structure", text="", icon="FILE_NEW")
-        row.operator("blendir.edit_structure", text="", icon="GREASEPENCIL")
-        row.operator("blendir.delete_structure", text="", icon="TRASH")
-        row.operator("blendir.import_structure", text="", icon="IMPORT")
+        button_groups = (
+            (
+                ("new_structure", "New Structure", "FILE_NEW"),
+                ("edit_structure", "Edit Structure", "GREASEPENCIL"),
+                ("delete_structure", "Delete Structure", "TRASH"),
+                ("import_structure", "Import Structure", "IMPORT"),
+            ),
+            (
+                ("render_image", "Render Image", "RENDER_STILL"),
+                ("render_animation", "Render Animation", "RENDER_ANIMATION"),
+                ("bookmarks", "Edit Bookmarks", "BOOKMARKS"),
+                ("open_preferences", "Preferences", "PREFERENCES"),
+            ),
+        )
 
-        row = box.box().row()
-        row.alignment = "CENTER"
-        row.operator("blendir.render_image", text="", icon="RENDER_STILL")
-        row.operator("blendir.render_animation", text="", icon="RENDER_ANIMATION")
-        row.operator("blendir.bookmarks", text="", icon="BOOKMARKS")
-        row.operator("blendir.open_preferences", text="", icon="PREFERENCES")
+        if not prefs.verbose_ui:
+            for group in button_groups:
+                row = box.box().row()
+                row.alignment = "CENTER"
+                for operator, _, icon in group:
+                    row.operator(f"blendir.{operator}", text="", icon=icon)
+        else:
+            for group in button_groups:
+                col = box.box().column()
+                col.alignment = "CENTER"
+                for operator, text, icon in group:
+                    row = col.row()
+                    row.scale_y = 1.25
+                    row.operator(f"blendir.{operator}", text=text, icon=icon)
 
 
 class BLENDIR_MT_bookmarks_pie(Menu):
