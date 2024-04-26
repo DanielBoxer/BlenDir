@@ -1,14 +1,12 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
-import bpy
-import pathlib
 import os
-from .utils import (
-    get_invalid_char,
-    get_preferences,
-    get_datetime,
-)
+import pathlib
+
+import bpy
+
+from .utils import get_datetime, get_invalid_char, get_preferences
 
 
 def read_structure(structure_path):
@@ -200,6 +198,7 @@ def make_render_folders():
     prefs = get_preferences()
     render_path = bpy.context.scene.blendir_props.render_path
     if render_path == "":
+        # render path not set, use the one in output properties instead
         default_render_path = bpy.context.scene.render.filepath
         bpy.context.scene.blendir_props.render_path = default_render_path
         render_path = default_render_path
@@ -207,7 +206,8 @@ def make_render_folders():
     render_path = pathlib.Path(render_path).resolve()
     if prefs.make_frames_folder:
         render_path /= "Frames"
-        render_path.mkdir(exist_ok=True)
+        # create parent folders if they don't exist
+        render_path.mkdir(exist_ok=True, parents=True)
     if prefs.make_animation_folders:
         num = 0
         # the new folder will be named one number higher than the last
