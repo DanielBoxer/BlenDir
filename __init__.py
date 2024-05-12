@@ -47,6 +47,7 @@ from .src.ops.blendir_ops import (
     BLENDIR_OT_open_reference,
     BLENDIR_OT_reset_props,
     BLENDIR_OT_save_blend,
+    BLENDIR_OT_save_panel_category,
     BLENDIR_OT_start,
 )
 from .src.ops.bookmark_ops import (
@@ -164,6 +165,9 @@ class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
         description=("Show text beside buttons in the main panel"),
         default=False,
     )
+    panel_category: StringProperty(
+        name="Panel Category", description="Location of add-on panel", default="Tool"
+    )
 
     def draw(self, context):
         draw_prefs(self, context, keymaps)
@@ -190,6 +194,7 @@ classes = (
     BLENDIR_OT_render_animation,
     BLENDIR_OT_render_image,
     BLENDIR_OT_open_preferences,
+    BLENDIR_OT_save_panel_category,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks_pie,
     BLENDIR_MT_references_pie,

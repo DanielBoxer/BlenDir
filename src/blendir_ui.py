@@ -8,7 +8,12 @@ from bpy.types import Menu, Panel
 
 from .bookmark import get_bookmarks
 from .recent import get_recent
-from .utils import get_preferences, get_references
+from .utils import (
+    get_panel_category,
+    get_preferences,
+    get_references,
+    set_panel_category,
+)
 
 
 def draw_prefs(self, context, keymaps):
@@ -101,6 +106,10 @@ def draw_prefs(self, context, keymaps):
 
     box.prop(self, "verbose_ui")
 
+    split = box.split(factor=0.8)
+    split.prop(self, "panel_category")
+    split.operator("blendir.save_panel_category")
+
     props = context.scene.blendir_props
     # iterate over all props in property group
     if any(getattr(props, key) for key in props.__annotations__.keys()):
@@ -112,7 +121,7 @@ class BLENDIR_PT_main(Panel):
     bl_label = "BlenDir"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Tool"
+    bl_category = get_panel_category()
 
     def draw(self, context):
         layout = self.layout

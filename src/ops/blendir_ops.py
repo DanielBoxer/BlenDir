@@ -16,6 +16,7 @@ from ..utils import (
     get_references,
     open_file,
     reset_props,
+    set_panel_category,
     valid_filename,
     valid_path,
 )
@@ -245,4 +246,22 @@ class BLENDIR_OT_open_preferences(bpy.types.Operator):
         context.preferences.active_section = "ADDONS"
         bpy.data.window_managers["WinMan"].addon_search = "BlenDir"
         bpy.ops.preferences.addon_show(module="BlenDir")
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_save_panel_category(bpy.types.Operator):
+    bl_idname = "blendir.save_panel_category"
+    bl_label = "Save"
+    bl_description = "Save panel category"
+
+    def execute(self, context):
+        prefs = get_preferences()
+        new_category = prefs.panel_category
+
+        if not new_category:
+            self.report({"ERROR"}, "Category can't be empty")
+            return {"CANCELLED"}
+
+        set_panel_category(new_category)
+        self.report({"INFO"}, "Panel category set. Restart Blender to see changes")
         return {"FINISHED"}

@@ -1,12 +1,13 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
-import bpy
-import pathlib
 import datetime
 import os
-import sys
+import pathlib
 import subprocess
+import sys
+
+import bpy
 
 
 def get_invalid_char(line, skip_keywords=False):
@@ -131,3 +132,20 @@ def get_active_path(input_struct=None):
 
 def get_preferences():
     return bpy.context.preferences.addons[get_dir_path().stem].preferences
+
+
+def get_panel_category():
+    path = get_dir_path() / "panel_location.txt"
+
+    # default is Tool
+    if not path.is_file():
+        return "Tool"
+
+    with path.open("r") as f:
+        return f.read().strip()
+
+
+def set_panel_category(location):
+    path = get_dir_path() / "panel_location.txt"
+    with path.open("w") as f:
+        f.write(location)
