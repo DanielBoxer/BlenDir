@@ -1,11 +1,11 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
-from .utils import get_dir_path
+from .utils import get_recent_path
 
 
 def add_recent(project_path):
-    path = get_dir_path() / "recent.txt"
+    path = get_recent_path()
     recent_projects = get_recent()
     if len(recent_projects) > 7:
         recent_projects.append(project_path)
@@ -18,7 +18,7 @@ def add_recent(project_path):
 
 
 def get_recent():
-    path = get_dir_path() / "recent.txt"
+    path = get_recent_path()
     recent_projects = []
     if path.is_file():
         with path.open() as f:

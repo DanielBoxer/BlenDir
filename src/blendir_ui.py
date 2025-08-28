@@ -110,6 +110,9 @@ def draw_prefs(self, context, keymaps):
     split.prop(self, "panel_category")
     split.operator("blendir.save_panel_category")
 
+    box.operator("blendir.export")
+    box.operator("blendir.import")
+
     props = context.scene.blendir_props
     # iterate over all props in property group
     if any(getattr(props, key) for key in props.__annotations__.keys()):

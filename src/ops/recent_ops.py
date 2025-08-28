@@ -2,8 +2,9 @@
 # See __init__.py and LICENSE for more information
 
 import bpy
+
 from ..recent import get_recent
-from ..utils import open_file, get_references, get_dir_path, get_preferences
+from ..utils import get_preferences, get_recent_path, get_references, open_file
 
 
 class BLENDIR_OT_open_recent(bpy.types.Operator):
@@ -47,7 +48,7 @@ class BLENDIR_OT_edit_recent(bpy.types.Operator):
     bl_description = "Edit recent projects"
 
     def execute(self, context):
-        path = get_dir_path() / "recent.txt"
+        path = get_recent_path()
         if path.is_file():
             open_file(path)
         else:

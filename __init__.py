@@ -43,6 +43,8 @@ from .src.blendir_ui import (
 from .src.bookmark import BLENDIR_PG_bookmark
 from .src.ops.blendir_ops import (
     BLENDIR_OT_directory_browser,
+    BLENDIR_OT_export,
+    BLENDIR_OT_import,
     BLENDIR_OT_open_preferences,
     BLENDIR_OT_open_reference,
     BLENDIR_OT_reset_props,
@@ -195,6 +197,8 @@ classes = (
     BLENDIR_OT_render_image,
     BLENDIR_OT_open_preferences,
     BLENDIR_OT_save_panel_category,
+    BLENDIR_OT_export,
+    BLENDIR_OT_import,
     BLENDIR_PT_main,
     BLENDIR_MT_bookmarks_pie,
     BLENDIR_MT_references_pie,

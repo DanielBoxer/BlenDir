@@ -124,6 +124,14 @@ def get_struct_path():
     return get_dir_path() / "structures"
 
 
+def get_recent_path():
+    return get_dir_path() / "recent.txt"
+
+
+def get_panel_path():
+    return get_dir_path() / "panel_location.txt"
+
+
 def get_active_path(input_struct=None):
     if input_struct is not None:
         return get_struct_path() / f"blendir_{input_struct}.txt"
@@ -135,7 +143,7 @@ def get_preferences():
 
 
 def get_panel_category():
-    path = get_dir_path() / "panel_location.txt"
+    path = get_panel_path()
 
     # default is Tool
     if not path.is_file():
@@ -146,6 +154,6 @@ def get_panel_category():
 
 
 def set_panel_category(location):
-    path = get_dir_path() / "panel_location.txt"
+    path = get_panel_path()
     with path.open("w") as f:
         f.write(location)

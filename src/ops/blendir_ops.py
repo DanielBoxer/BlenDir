@@ -1,19 +1,24 @@
 # Copyright (C) 2022 Daniel Boxer
 # See __init__.py and LICENSE for more information
 
+import zipfile
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 from bpy.types import Operator
-from bpy_extras.io_utils import ImportHelper
+from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from ..blendir_main import BlenDirError, archive, read_structure
 from ..bookmark import add_bookmark, get_bookmarks
 from ..recent import add_recent
-from ..structure import import_struct
+from ..structure import import_struct, structs_add_value
 from ..utils import (
     get_active_path,
+    get_panel_path,
     get_preferences,
+    get_recent_path,
     get_references,
+    get_struct_path,
     open_file,
     reset_props,
     set_panel_category,
@@ -236,7 +241,7 @@ class BLENDIR_OT_reset_props(Operator):
         return {"FINISHED"}
 
 
-class BLENDIR_OT_open_preferences(bpy.types.Operator):
+class BLENDIR_OT_open_preferences(Operator):
     bl_idname = "blendir.open_preferences"
     bl_label = "Preferences"
     bl_description = "Open preferences"
@@ -249,7 +254,7 @@ class BLENDIR_OT_open_preferences(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class BLENDIR_OT_save_panel_category(bpy.types.Operator):
+class BLENDIR_OT_save_panel_category(Operator):
     bl_idname = "blendir.save_panel_category"
     bl_label = "Save"
     bl_description = "Save panel category"
@@ -264,4 +269,71 @@ class BLENDIR_OT_save_panel_category(bpy.types.Operator):
 
         set_panel_category(new_category)
         self.report({"INFO"}, "Panel category set. Restart Blender to see changes")
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_export(Operator, ExportHelper):
+    bl_idname = "blendir.export"
+    bl_label = "Export structures"
+    bl_description = "Export structures, recent files and panel location"
+    filename_ext = ".zip"
+
+    def execute(self, context):
+        filepath = self.filepath
+
+        with zipfile.ZipFile(filepath, "w", zipfile.ZIP_DEFLATED) as zipf:
+            struct_path = get_struct_path()
+            if struct_path.is_dir():
+                # add all structure files
+                for path in struct_path.iterdir():
+                    if path.is_file():
+                        # include structure folder
+                        zipf.write(path, path.relative_to(struct_path.parent))
+
+            recent_path = get_recent_path()
+            if recent_path.is_file():
+                zipf.write(recent_path, recent_path.name)
+
+            panel_path = get_panel_path()
+            if panel_path.is_file():
+                zipf.write(panel_path, panel_path.name)
+
+        self.report({"INFO"}, f"Exported files to {filepath}")
+        return {"FINISHED"}
+
+
+class BLENDIR_OT_import(Operator, ImportHelper):
+    bl_idname = "blendir.import"
+    bl_label = "Import structures"
+    bl_description = "Import structures, recent files and panel location"
+    filename_ext = ".zip"
+
+    def execute(self, context):
+        filepath = self.filepath
+
+        with zipfile.ZipFile(filepath, "r") as zipf:
+            for entry in zipf.infolist():
+                if entry.is_dir():
+                    continue
+
+                if entry.filename.startswith("structures/"):
+                    struct_path = get_struct_path()
+                    struct_path.mkdir(parents=True, exist_ok=True)
+                    zipf.extract(entry, struct_path.parent)
+
+                elif entry.filename == "recent.txt":
+                    recent_path = get_recent_path()
+                    zipf.extract(entry, recent_path.parent)
+
+                elif entry.filename == "panel_location.txt":
+                    panel_path = get_panel_path()
+                    zipf.extract(entry, panel_path.parent)
+
+        # sync prefs with new structs
+        for struct in get_struct_path().iterdir():
+            name = struct.stem.split("blendir_")
+            if len(name) > 1:
+                structs_add_value(name[1])
+
+        self.report({"INFO"}, f"Imported files from {filepath}")
         return {"FINISHED"}
