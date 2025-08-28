@@ -1,33 +1,54 @@
-name: Package
+name: Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      increment:
+        description: "Which part of the version to increment"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+        default: "patch"
+        required: true
+
+      version:
+        description: "Override version increment"
+        required: false
+
+env:
+  PACKAGE_NAME: "BlenDir"
+  INCLUDED_FILES: "src structures LICENSE __init__.py blender_manifest.toml"
 
 jobs:
   package:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
 
-    env:
-      OUTPUT_NAME: "BlenDir"
-      INCLUDED_FILES: "src structures LICENSE __init__.py"
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Get Next Version
+        id: get_version
+        uses: danielboxer/next-version-action@v1
+        with:
+          increment: ${{ github.event.inputs.increment }}
+          version: ${{ github.event.inputs.version }}
+          use_v_prefix: true
 
       - name: Move to nested folder
         run: |
-          mkdir $OUTPUT_NAME
-          mv $INCLUDED_FILES $OUTPUT_NAME
+          mkdir $PACKAGE_NAME
+          mv $INCLUDED_FILES $PACKAGE_NAME
 
       - name: Zip folder
-        run: zip -r ${OUTPUT_NAME}.zip $OUTPUT_NAME
+        run: zip -r ${{ env.PACKAGE_NAME }}.zip ${{ env.PACKAGE_NAME }}
 
-      - name: Upload release asset
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.OUTPUT_NAME }}.zip
+          tag_name: ${{ steps.get_version.outputs.new_version }}
+          files: ${{ env.PACKAGE_NAME }}.zip
