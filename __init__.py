@@ -18,7 +18,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "Automatic folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 19, 2),
+    "version": (0, 20, 0),
     "location": (
         "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
     ),

@@ -1,0 +1,18 @@
+schema_version = "1.0.0"
+
+maintainer = "Daniel Boxer <dani3lb0x3r@gmail.com>"
+type = "add-on"
+license = ["SPDX:GPL-3.0-or-later"]
+
+id = "blendir"
+name = "BlenDir"
+version = "0.20.0"
+blender_version_min = "2.90.0"
+tagline = "Automatic custom folder structure creation and management"
+website = "https://github.com/DanielBoxer/BlenDir"
+
+# # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
+tags = ["System"]
+
+[permissions]
+files = "Create folders and save folder structure files"
