@@ -7,7 +7,7 @@ license = ["SPDX:GPL-3.0-or-later"]
 id = "blendir"
 name = "BlenDir"
 version = "0.20.0"
-blender_version_min = "2.90.0"
+blender_version_min = "4.2.0"
 tagline = "Automatic custom folder structure creation and management"
 website = "https://github.com/DanielBoxer/BlenDir"
 
