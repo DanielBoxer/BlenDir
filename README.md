@@ -1,8 +1,8 @@
-# BlenDir <!-- omit in toc -->
+![Banner](docs/banner.png)
 
-**BlenDir** is a Blender add-on for automatic folder structure creation and management!
+**BlenDir** is a Blender add-on for automatic project folder structure creation and management!
 
-<img align="right" src="docs/blendir.PNG">
+<img align="right" alt="Add-on UI" src="docs/blendir.png">
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -19,8 +19,6 @@
 - [Setup Instructions](#setup-instructions)
 - [General Instructions](#general-instructions)
   - [Automatically Generate Folder Structure Files](#automatically-generate-folder-structure-files)
-- [Installation](#installation)
-- [Notes](#notes)
 
 ## Features
 
@@ -30,11 +28,21 @@
 
 ### Make Custom Folder Structures
 
-- Automatically [generate](#generate-folder-structure-files-from-existing-directories) folder structures or make them from scratch
+- Automatically [generate](#automatically-generate-folder-structure-files) folder structures or make them from scratch
 - Add functionality with [keywords](#keywords)
 - Easily browse your saved folder structures
+- Example structure:
 
-![Browse](docs/browse.PNG)
+    ```js
+    *F*B*M
+      Assets*M
+        Models
+        Textures
+      References*R*M
+      Rendered*O*M
+    ```
+
+![Browse](docs/browse.png)
 
 ### Bookmarks
 
@@ -47,7 +55,7 @@
 
 - Quickly open your project references with a pie menu
 
-![References](docs/references.PNG)
+![References](docs/references.png)
 
 ### Auto Save Image Renders
 
@@ -66,7 +74,7 @@
 - Use the recent projects menu to open previous projects made with BlenDir
 - All your project references will be automatically opened
 
-![Recent Projects](docs/recent.PNG)
+![Recent Projects](docs/recent.png)
 
 ### Keywords
 
@@ -88,7 +96,7 @@
 ## Setup Instructions
 
 1. Delete the `Animation` and `Example` demo structures that come with BlenDir (use the BlenDir delete button)
-2. Click the [import](#generate-folder-structure-files-from-existing-directories) button or the new structure button to create a folder structure file
+2. Click the [import](#automatically-generate-folder-structure-files) button or the new structure button to create a folder structure file
 3. Add [keywords](#keywords) to the file for custom functionality. For example:
 
      - replace the root folder name with `*F*B`
@@ -100,28 +108,10 @@
 
 ### Automatically Generate Folder Structure Files
 
-- Click ![Import Structure](docs/import.PNG)
+- Click ![Import Structure](docs/import.png)
 - Use the directory browser to select an existing root folder
 
-![Directory Browser](docs/directory_browser.PNG)
+![Directory Browser](docs/directory_browser.png)
 
 - The complete folder structure file will be generated automatically
 - This file can be used to recreate the saved folder structure
-
-## Installation
-
-- Download the `ZIP` file (don't extract it)
-  - Either go to [Releases](https://github.com/DanielBoxer/BlenDir/releases/latest) and download the `ZIP` file for the latest stable version
-  - Or press the `Code` button at the top of the page and then `Download ZIP` for the newest experimental version
-
-- Don't add a `.` to the folder name, this will cause an import error
-- In Blender, open `Preferences` and go to `Add-ons`
-- Click `Install`
-- Select the `ZIP` file in the file browser
-- Click `Install Add-on`
-- Enable the add-on by checking the box
-
-## Notes
-
-- BlenDir is for Blender version 2.90 and above
-- Works on Windows and Linux, untested on macOS
