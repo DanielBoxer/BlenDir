@@ -27,8 +27,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="0.52050916"
-     inkscape:cx="721.40901"
-     inkscape:cy="494.70791"
+     inkscape:cx="575.39814"
+     inkscape:cy="437.07204"
      inkscape:window-width="2400"
      inkscape:window-height="1261"
      inkscape:window-x="2391"
@@ -125,7 +125,7 @@
          style="fill:#ffffff;fill-opacity:1;stroke-width:0.35389"
          inkscape:label="blender" /></g><text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:48px;line-height:1.25;font-family:Inter;-inkscape-font-specification:'Inter Semi-Bold';fill:#ffffff;fill-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:53.3333px;line-height:1.25;font-family:Inter;-inkscape-font-specification:'Inter Semi-Bold';fill:#ffffff;fill-opacity:1"
        x="715.05011"
        y="335.4765"
        id="text1"
@@ -133,9 +133,11 @@
          sodipodi:role="line"
          id="tspan1"
          x="715.05011"
-         y="335.4765">Automatic custom project structure creator</tspan></text><g
+         y="335.4765"
+         style="font-size:53.3333px">One click custom project folder structure</tspan></text><g
        id="g17"
-       inkscape:label="folders"><g
+       inkscape:label="folders"
+       transform="translate(49.95109)"><g
          inkscape:label="folder"
          id="g7"
          transform="matrix(0.51708023,0,0,0.51708023,1223.6711,407.44968)"><rect
@@ -221,11 +223,11 @@
        id="path11"
        inkscape:path-effect="#path-effect11"
        inkscape:original-d="m 783.8479,710.8425 c 97.34058,0 194.68116,0 292.0217,0"
-       transform="matrix(0.74252385,0,0,1,274.82757,21.133154)"
+       transform="matrix(0.74252385,0,0,1,295.96072,21.133154)"
        inkscape:label="arrow" /><g
        id="g1"
        inkscape:label="structure"><rect
-         style="fill:#236192;fill-opacity:1;fill-rule:evenodd"
+         style="fill:#282c34;fill-opacity:1;fill-rule:evenodd"
          id="rect4"
          width="455.32339"
          height="380.39676"

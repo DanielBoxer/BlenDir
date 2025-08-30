@@ -1,4 +1,4 @@
-![Banner](docs/banner.png)
+![Banner](docs/banner.svg)
 
 **BlenDir** is a Blender add-on for automatic project folder structure creation and management!
 

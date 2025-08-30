@@ -8,7 +8,7 @@ id = "blendir"
 name = "BlenDir"
 version = "0.20.0"
 blender_version_min = "4.2.0"
-tagline = "One click custom project folder structure creation"
+tagline = "One click custom project folder structure"
 website = "https://github.com/DanielBoxer/BlenDir"
 
 # # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
