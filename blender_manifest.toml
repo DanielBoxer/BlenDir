@@ -6,7 +6,7 @@ license = ["SPDX:GPL-3.0-or-later"]
 
 id = "blendir"
 name = "BlenDir"
-version = "0.20.0"
+version = "0.20.1"
 blender_version_min = "4.2.0"
 tagline = "One click custom project folder structure"
 website = "https://github.com/DanielBoxer/BlenDir"

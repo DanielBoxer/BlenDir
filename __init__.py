@@ -59,7 +59,7 @@ bl_info = {
     "author": "Daniel Boxer",
     "description": "One click custom project folder structure",
     "blender": (2, 90, 0),
-    "version": (0, 20, 0),
+    "version": (0, 20, 1),
     "location": ("View3D > Sidebar > BlenDir"),
     "category": "System",
     "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
