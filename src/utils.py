@@ -4,6 +4,7 @@
 import datetime
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 
@@ -120,16 +121,45 @@ def get_dir_path():
     return get_file_path().parents[1]
 
 
+def get_addon_name():
+    return get_dir_path().stem
+
+
+def get_root_package():
+    parts = __package__.split(".")
+    return ".".join(parts[:3])
+
+
+def get_extension_dir_path():
+    if bpy.app.version < (4, 2, 0):
+        return get_dir_path()
+
+    blendir_folder = pathlib.Path(
+        bpy.utils.extension_path_user(get_root_package(), create=True)
+    )
+    struct_dest = blendir_folder / "structures"
+    if not struct_dest.exists():
+        # copy structures folder to the safe extension folder
+        struct_src = get_dir_path() / "structures"
+        shutil.copytree(struct_src, struct_dest, dirs_exist_ok=True)
+
+    return blendir_folder
+
+
 def get_struct_path():
-    return get_dir_path() / "structures"
+    return get_extension_dir_path() / "structures"
 
 
 def get_recent_path():
-    return get_dir_path() / "recent.txt"
+    return get_extension_dir_path() / "recent.txt"
 
 
 def get_panel_path():
-    return get_dir_path() / "panel_location.txt"
+    return get_extension_dir_path() / "panel_location.txt"
+
+
+def get_bookmark_path():
+    return get_extension_dir_path() / "bookmarks.txt"
 
 
 def get_active_path(input_struct=None):
@@ -138,16 +168,22 @@ def get_active_path(input_struct=None):
     return get_struct_path() / f"blendir_{get_preferences().structure}.txt"
 
 
+def get_addon_id():
+    if bpy.app.version >= (4, 2, 0):
+        return get_root_package()
+    return get_addon_name()
+
+
 def get_preferences():
-    return bpy.context.preferences.addons[get_dir_path().stem].preferences
+    return bpy.context.preferences.addons[get_addon_id()].preferences
 
 
 def get_panel_category():
     path = get_panel_path()
 
-    # default is Tool
+    DEFAULT_PANEL = "BlenDir"
     if not path.is_file():
-        return "Tool"
+        return DEFAULT_PANEL
 
     with path.open("r") as f:
         return f.read().strip()

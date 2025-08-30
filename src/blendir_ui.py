@@ -12,7 +12,6 @@ from .utils import (
     get_panel_category,
     get_preferences,
     get_references,
-    set_panel_category,
 )
 
 

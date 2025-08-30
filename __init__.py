@@ -13,22 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with BlenDir. If not, see <https://www.gnu.org/licenses/>.
 
-bl_info = {
-    "name": "BlenDir",
-    "author": "Daniel Boxer",
-    "description": "Automatic folder structure",
-    "blender": (2, 90, 0),
-    "version": (0, 20, 0),
-    "location": (
-        "View3D > Sidebar > Tool & Properties > Active Tool and Workspace settings"
-    ),
-    "category": "System",
-    "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
-    "tracker_url": "https://github.com/DanielBoxer/BlenDir/issues",
-}
-
-
-import pathlib
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
@@ -68,6 +52,19 @@ from .src.ops.structure_ops import (
     BLENDIR_OT_new_structure,
 )
 from .src.structure import init_structs, update_structs
+from .src.utils import get_addon_id
+
+bl_info = {
+    "name": "BlenDir",
+    "author": "Daniel Boxer",
+    "description": "One click custom project folder structure",
+    "blender": (2, 90, 0),
+    "version": (0, 20, 0),
+    "location": ("View3D > Sidebar > BlenDir"),
+    "category": "System",
+    "doc_url": "https://github.com/DanielBoxer/BlenDir#readme",
+    "tracker_url": "https://github.com/DanielBoxer/BlenDir/issues",
+}
 
 
 class BLENDIR_PG_properties(bpy.types.PropertyGroup):
@@ -79,7 +76,7 @@ class BLENDIR_PG_properties(bpy.types.PropertyGroup):
 
 
 class BLENDIR_AP_preferences(bpy.types.AddonPreferences):
-    bl_idname = pathlib.Path(__file__).parent.stem
+    bl_idname = get_addon_id()
 
     struct_data = init_structs()
     struct_items = struct_data[0]

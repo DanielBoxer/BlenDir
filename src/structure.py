@@ -37,7 +37,7 @@ def new_struct(name, use_template):
 
 
 def open_struct(file):
-    if not "No structures? Try adding some!" in get_preferences().struct_items:
+    if "No structures? Try adding some!" not in get_preferences().struct_items:
         # open file in default text editor
         open_file(file)
     else:
@@ -83,7 +83,7 @@ def structs_add_value(value):
 
 def structs_remove_value(value):
     prefs = get_preferences()
-    if not "No structures? Try adding some!" in prefs.struct_items:
+    if "No structures? Try adding some!" not in prefs.struct_items:
         # delete structure file
         get_active_path().unlink()
         prefs.struct_items.remove(value)

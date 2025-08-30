@@ -3,18 +3,18 @@
 
 import bpy
 from .blendir_main import BlenDirError
-from .utils import get_dir_path, open_file
+from .utils import get_bookmark_path, open_file
 
 
 def add_bookmark(bookmark):
-    path = get_dir_path() / "bookmarks.txt"
+    path = get_bookmark_path()
     with path.open("a") as f:
         f.write(bookmark + "\n")
 
 
 def get_bookmarks():
     bookmarks = []
-    path = get_dir_path() / "bookmarks.txt"
+    path = get_bookmark_path()
     if path.is_file():
         with path.open("r") as f:
             for line in f:
@@ -23,7 +23,7 @@ def get_bookmarks():
 
 
 def open_bookmarks():
-    path = get_dir_path() / "bookmarks.txt"
+    path = get_bookmark_path()
     if path.is_file():
         open_file(path)
     else:
